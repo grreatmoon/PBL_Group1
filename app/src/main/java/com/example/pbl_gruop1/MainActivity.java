@@ -18,7 +18,27 @@ import com.example.pbl_gruop1.databinding.ActivityMainBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final int PERMISSION_REQUEST_CODE = 1001;
+    //code for verifying permission request
+
+    private final String[] REQUIRED_PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACTIVITY_RECOGNITION
+    };
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -27,7 +47,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        checkAndRequestPermissions();
+        //For permissions about step counter,gps,internet
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        //For loading XML layout
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
@@ -74,4 +98,52 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    private void checkAndRequestPermissions(){
+        List<String> permissionsToRequest = new ArrayList<>();
+
+        for(String permission : REQUIRED_PERMISSIONS){
+           if(ContextCompat.checkSelfPermission(this,permission) != PackageManager.PERMISSION_GRANTED){
+               permissionsToRequest.add(permission);
+           }
+        }
+
+        if(!permissionsToRequest.isEmpty()){
+            ActivityCompat.requestPermissions(
+                    this,
+                    permissionsToRequest.toArray(new String[0]),
+                    PERMISSION_REQUEST_CODE
+            );
+        } else {
+            startAppInitialization();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+
+        if(requestCode == PERMISSION_REQUEST_CODE){
+            boolean allGranted = true;
+            for(int result:grantResults){
+                if(result != PackageManager.PERMISSION_GRANTED){
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if(allGranted){
+                startAppInitialization();
+            } else {
+                Toast.makeText(this, "requests for using this app got rejected",Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+    }
+
+    private void startAppInitialization(){
+        Log.d("INIT","All requests got cleared.proceeding to next step");
+        Toast.makeText(this,"All requests got cleared.proceeding to next step",Toast.LENGTH_SHORT).show();
+    }
+
 }
