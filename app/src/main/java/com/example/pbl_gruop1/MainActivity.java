@@ -45,13 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//  onCrerate関数内でXMLレイアウトを読み込んで
         super.onCreate(savedInstanceState);
 
         checkAndRequestPermissions();
-        //For permissions about step counter,gps,internet
+        //gpsやinternet等の許可をチェック
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        //For loading XML layout
+        //デザインしたXMLレイアウトファイルをメモリ上に読み込む
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAndRequestPermissions(){
+    //このメソッドはREQUIRED_PERMISSIONSに設定した権限が許可されているか確認し、許可されていなければユーザーに要求するメソッド
         List<String> permissionsToRequest = new ArrayList<>();
 
         for(String permission : REQUIRED_PERMISSIONS){
