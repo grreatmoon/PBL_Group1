@@ -3,7 +3,7 @@ package com.example.pbl_gruop1;
 import java.util.ArrayList;
 import java.util.List;
 
-// ゲーム内の基本的なデータを保持するクラス
+// ゲーム内の基本的なデータを保持するデータクラス
 public class PlayerData {
 
     // プレイヤー名, いらない可能性大？
