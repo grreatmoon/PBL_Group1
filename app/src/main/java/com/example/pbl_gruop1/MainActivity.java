@@ -31,14 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    //Test Nishino
-    //test Oishi
+
     private static final int PERMISSION_REQUEST_CODE = 1001;
     //code for verifying permission request
 
     private final String[] REQUIRED_PERMISSIONS = {
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACTIVITY_RECOGNITION
+            Manifest.permission.ACCESS_FINE_LOCATION
     };
 
     private AppBarConfiguration appBarConfiguration;
