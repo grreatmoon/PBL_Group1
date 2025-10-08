@@ -1,10 +1,11 @@
-package com.example.pbl_gruop1; // この行はあなたの環境に合わせてください
+package com.example.pbl_gruop1;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.location.ActivityTransitionResult;
 import com.google.android.gms.location.DetectedActivity;
@@ -31,11 +32,30 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
 
                     // ログに記録して、動作しているか確認する
                     Log.d(TAG, "検知した行動: " + activity + ", 状態: " + transitionType);
+
+                    //もし「歩行」を「開始」したなら、速度チェックを行う
+                    if (event.getActivityType() == DetectedActivity.WALKING && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
+                        Log.d(TAG, "歩行開始を検知。GPSによる速度チェックを開始します。");
+
+                        SpeedChecker speedChecker = new SpeedChecker();
+                        speedChecker.checkSpeed(context, new SpeedChecker.SpeedCheckCallback() {
+                            @Override
+                            public void onSpeedCheckResult(boolean isWalking) {
+                                if (isWalking) {
+                                    Log.d(TAG, "速度チェックの結果：「歩行」と判断されました。エネルギー計算を開始します。");
+                                    //ここにエネルギー計算(タイマー開始)のロジックを後で追加
+                                } else {
+                                    Log.d(TAG, "速度チェックの結果：「車」と判断されました。エネルギー計算は行いません。");
+                                    //エネルギー計算はしない
+                                }
+                            }
+                        });
+
+                    }
                 }
             }
         }
     }
-
     // ログを見やすくするための補助機能
     private String toActivityString(int activity) {
         switch (activity) {
