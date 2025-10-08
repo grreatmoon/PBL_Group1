@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    //Test Nishino
 
     private static final int PERMISSION_REQUEST_CODE = 1001;
     //code for verifying permission request

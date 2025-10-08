@@ -12,7 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.pbl_gruop1.databinding.FragmentFirstBinding;
 
 public class FirstFragment extends Fragment {
-
+    //test Nishino
     private FragmentFirstBinding binding;
 
     @Override
