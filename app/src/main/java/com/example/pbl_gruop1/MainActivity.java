@@ -41,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
     private PendingIntent activityTransitionPendingIntent;
+    //Intentはメッセージオブジェクト.「今すぐ」何かを実行するためのメッセージ.
+    //PendingIntentは「未来のいつか」に実行されることを「予約」するためのメッセージ.「通知をタップしたらアプリを開く」等.
     private ActivityRecognitionClient activityRecognitionClient;
+    //Googleの行動認識APIクライアント
 
     private static final int PERMISSION_REQUEST_CODE = 1001;
     //code for verifying permission request
@@ -51,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//  onCrerate関数内でXMLレイアウトを読み込んでいる
+    //アプリ起動時の初期化
+    // onCrerate関数内でXMLレイアウトを読み込んでいる
         super.onCreate(savedInstanceState);
 
         checkAndRequestPermissions();
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> permissionsToRequest = new ArrayList<>();
 
         // 必須の権限（位置情報）をチェック
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {   //この文で許可がなければ権限をリクエストしている
             permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
@@ -147,9 +151,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(allGranted){
-                startAppInitialization();
+                startAppInitialization();   //必要な権限がすべてクリアであればアプリを初期化
             } else {
-                Toast.makeText(this, "requests for using this app got rejected",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "requests for using this app got rejected",Toast.LENGTH_LONG).show();  //必要な権限がすべて許可されていない場合はアプリを終了
                 finish();
             }
         }
@@ -191,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     //APIクライアントを使って監視を開始
     activityRecognitionClient = ActivityRecognition.getClient(this);
 
-// OSバージョンによって権限チェックの要否を判断する
+// OSバージョンによって権限チェックの要否を判断する.このチェック入れないとエラー出る.
     boolean permissionGranted;
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
         // Android 10以上：権限があるかチェック
