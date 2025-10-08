@@ -1,9 +1,18 @@
 package com.example.pbl_gruop1;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.location.ActivityTransition;
+import com.google.android.gms.location.ActivityTransitionRequest;
+import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -19,12 +28,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -32,19 +39,19 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String TAG = "MainActivity";
+    private PendingIntent activityTransitionPendingIntent;
+    private ActivityRecognitionClient activityRecognitionClient;
+
     private static final int PERMISSION_REQUEST_CODE = 1001;
     //code for verifying permission request
-
-    private final String[] REQUIRED_PERMISSIONS = {
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//  onCrerate関数内でXMLレイアウトを読み込んで
+//  onCrerate関数内でXMLレイアウトを読み込んでいる
         super.onCreate(savedInstanceState);
 
         checkAndRequestPermissions();
@@ -103,10 +110,16 @@ public class MainActivity extends AppCompatActivity {
     //このメソッドはREQUIRED_PERMISSIONSに設定した権限が許可されているか確認し、許可されていなければユーザーに要求するメソッド
         List<String> permissionsToRequest = new ArrayList<>();
 
-        for(String permission : REQUIRED_PERMISSIONS){
-           if(ContextCompat.checkSelfPermission(this,permission) != PackageManager.PERMISSION_GRANTED){
-               permissionsToRequest.add(permission);
-           }
+        // 必須の権限（位置情報）をチェック
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+        // OSがAndroid 10 (API 29) 以上なら、身体活動の権限もチェック
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.ACTIVITY_RECOGNITION);
+            }
         }
 
         if(!permissionsToRequest.isEmpty()){
@@ -145,6 +158,62 @@ public class MainActivity extends AppCompatActivity {
     private void startAppInitialization(){
         Log.d("INIT","All requests got cleared.proceeding to next step");
         Toast.makeText(this,"All requests got cleared.proceeding to next step",Toast.LENGTH_SHORT).show();
+        startTracking();
     }
+
+    private void startTracking() {
+    //どんな行動の変化を監視したいかリストを作る
+    List<ActivityTransition> transitions = new ArrayList<>();
+    transitions.add(
+            new ActivityTransition.Builder()
+                    .setActivityType(DetectedActivity.WALKING)//歩行
+                    .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)//開始時
+                    .build());
+    transitions.add(
+            new ActivityTransition.Builder()
+                    .setActivityType(DetectedActivity.WALKING)//歩行
+                    .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)//終了時
+                    .build());
+    transitions.add(
+            new ActivityTransition.Builder()
+                    .setActivityType(DetectedActivity.STILL)//静止
+                    .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)//開始時
+                    .build());
+
+    //監視のリクエストを作成
+    ActivityTransitionRequest request = new ActivityTransitionRequest(transitions);
+
+    //通知を受け取るためのPendingIntentを作成
+    Intent intent = new Intent(this, ActivityTransitionReceiver.class);
+    intent.setAction("com.example.pbl_group1.TRANSITION_ACTION");
+    activityTransitionPendingIntent = PendingIntent.getBroadcast(this, 0, intent,PendingIntent.FLAG_MUTABLE);
+
+    //APIクライアントを使って監視を開始
+    activityRecognitionClient = ActivityRecognition.getClient(this);
+
+// OSバージョンによって権限チェックの要否を判断する
+    boolean permissionGranted;
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+        // Android 10以上：権限があるかチェック
+        permissionGranted = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED);
+    } else {
+        // Android 9以前：権限は不要なので、常に許可されていると見なす
+        permissionGranted = true;
+    }
+
+    if (permissionGranted) {
+        Task<Void> task = activityRecognitionClient.requestActivityTransitionUpdates(request, activityTransitionPendingIntent);
+
+        task.addOnSuccessListener(
+                result -> Log.d(TAG, "監視リクエストが正常に登録されました。")
+        );
+        task.addOnFailureListener(
+                e -> Log.e(TAG, "監視リクエストの登録に失敗しました: " + e.getMessage())
+        );
+    } else {
+        Log.e(TAG, "ACTIVITY_RECOGNITION の権限がありません。");
+    }
+    }
+
 
 }
