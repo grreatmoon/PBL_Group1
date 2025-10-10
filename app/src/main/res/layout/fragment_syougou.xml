@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ↓↓画面外まで要素が増えた場合にスクロールの動作を担う -->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SyougouFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/title_syougou"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="称号一覧"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:columnCount="2"
+            android:rowCount="10"
+            android:orientation="horizontal">
+
+            <!-- とりあえず2個目までは動作するように設定済(仮) -->
+            <Button
+                android:id="@+id/syougou_1_button"
+                android:text="称号１（仮）"
+                android:layout_margin="8dp"
+                android:layout_width="150dp"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/syougou_2_button"
+                android:text="称号２（仮）"
+                android:layout_margin="8dp"
+                android:layout_width="150dp"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/syougou_3_button"
+                android:text="？？？"
+                android:layout_margin="8dp"
+                android:layout_width="150dp"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/syougou_4_button"
+                android:text="？？？"
+                android:layout_margin="8dp"
+                android:layout_width="150dp"
+                android:gravity="center" />
+
+            <Button
+                android:text="？？？"
+                android:layout_margin="8dp"
+                android:layout_width="150dp"
+                android:gravity="center" />
+            <Button
+                android:text="？？？"
+                android:layout_margin="8dp"
+                android:layout_width="150dp"
+                android:gravity="center" />
+
+        </GridLayout>
+
+    </LinearLayout>
+
+</ScrollView>
