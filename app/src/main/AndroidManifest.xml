@@ -33,7 +33,7 @@
             android:name=".ActivityTransitionReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.pbl_gruop1.TRANSITION_ACTION" />
+                <action android:name="com.example.pbl_group1.TRANSITION_ACTION" />
             </intent-filter>
         </receiver>
     </application>
