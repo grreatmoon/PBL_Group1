@@ -33,6 +33,9 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                     // ログに記録して、動作しているか確認する
                     Log.d(TAG, "検知した行動: " + activity + ", 状態: " + transitionType);
 
+                    //タイマーのインスタンス(シングルトン)を取得
+                    EnergyTimer timer = EnergyTimer.getInstance();
+
                     //もし「歩行」を「開始」したなら、速度チェックを行う
                     if (event.getActivityType() == DetectedActivity.WALKING && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         Log.d(TAG, "歩行開始を検知。GPSによる速度チェックを開始します。");
@@ -43,7 +46,8 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                             public void onSpeedCheckResult(boolean isWalking) {
                                 if (isWalking) {
                                     Log.d(TAG, "速度チェックの結果：「歩行」と判断されました。エネルギー計算を開始します。");
-                                    //ここにエネルギー計算(タイマー開始)のロジックを後で追加
+                                    //タイマーを開始
+                                    timer.start();
                                 } else {
                                     Log.d(TAG, "速度チェックの結果：「車」と判断されました。エネルギー計算は行いません。");
                                     //エネルギー計算はしない
@@ -51,6 +55,23 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                             }
                         });
 
+                    }
+
+                    //もし「歩行」を「終了」または「静止」を「開始」したらタイマーを停止
+                    if ((event.getActivityType() == DetectedActivity.WALKING && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_EXIT) || (event.getActivityType() == DetectedActivity.STILL && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER)) {
+                        //タイマーを停止し、経過時間を秒で受け取る
+                        long elapsedSeconds = timer.stop();
+                        if (elapsedSeconds > 0) {
+                            //エネルギー変換(例として今は1energy/30second)
+                            long earnedEnergy = elapsedSeconds / 30;
+
+                            if (earnedEnergy > 0) {
+                                Log.d(TAG, elapsedSeconds + "秒間の歩行により、" + earnedEnergy + "エネルギーを獲得");
+                                //データを更新して保存するために、DataManagerBridge(橋渡し機能)を呼び出す
+                                DataManagerBridge.addEnergy(context, earnedEnergy);
+                            }
+
+                        }
                     }
                 }
             }
