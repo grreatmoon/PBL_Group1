@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/全体" />
+        app:srcCompat="@drawable/zentai" />
 
     <TextView
         android:id="@+id/level_text"
