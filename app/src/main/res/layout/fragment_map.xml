@@ -53,4 +53,100 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- 下ボタン -->
+    <ImageButton
+        android:id="@+id/button1"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginBottom="80dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:src="@drawable/not_available"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="下へ移動"/>
+
+    <!-- 上ボタン -->
+    <ImageButton
+        android:id="@+id/button2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:src="@drawable/not_available"
+        app:layout_constraintBottom_toTopOf="@+id/button1"
+        app:layout_constraintEnd_toEndOf="@+id/button1"
+        app:layout_constraintStart_toStartOf="@+id/button1"
+        android:contentDescription="上へ移動"/>
+
+    <!-- 左ボタン -->
+    <ImageButton
+        android:id="@+id/button3"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:src="@drawable/not_available"
+        app:layout_constraintBottom_toBottomOf="@+id/button1"
+        app:layout_constraintEnd_toStartOf="@+id/button1"
+        app:layout_constraintTop_toTopOf="@+id/button2"
+        android:contentDescription="左へ移動"/>
+
+    <!-- 右ボタン -->
+    <ImageButton
+        android:id="@+id/button4"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:src="@drawable/not_available"
+        app:layout_constraintBottom_toBottomOf="@+id/button1"
+        app:layout_constraintStart_toEndOf="@+id/button1"
+        app:layout_constraintTop_toTopOf="@+id/button2"
+        android:contentDescription="右へ移動"/>
+
+    <!-- +ボタン --><ImageButton
+    android:id="@+id/button_bottom_right_upper"
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginBottom="8dp"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:scaleType="fitCenter"
+    android:src="@drawable/not_available"
+    app:layout_constraintBottom_toTopOf="@+id/button_bottom_right_lower"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:contentDescription="拡大"/>
+
+    <!-- タッチ操作切り替えボタン -->
+    <ImageButton
+        android:id="@+id/button_toggle_touch"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="タッチ操作の切り替え"
+        android:scaleType="fitCenter"
+        android:src="@drawable/not_available"
+        app:layout_constraintBottom_toTopOf="@+id/button_bottom_right_upper"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- -ボタン -->
+    <ImageButton
+        android:id="@+id/button_bottom_right_lower"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:src="@drawable/not_available"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="縮小"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
