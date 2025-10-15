@@ -23,6 +23,7 @@ public class Area {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.radius = radius;
     }
 
     //ゲッターセッター
