@@ -90,18 +90,30 @@ public class ActivityTrackingService extends Service {
             GameDataManager dataManager = GameDataManager.getInstance();
             PlayerData playerData = dataManager.loadPlayerData(this);
 
-            // もし、そのエリアがまだ解放されていなければ
+            // もし、そのエリアが「まだ解放されていなければ」
             if (!playerData.unlockedAreaIds.contains(currentArea.getId())) {
                 Log.d(TAG, "新しいエリアを発見！ -> " + currentArea.getName());
                 // エリアIDを解放済みリストに追加
                 playerData.unlockedAreaIds.add(currentArea.getId());
+
+                // 新しいエリアを発見した時だけ、称号チェックを実行
+                TitleManager titleManager = TitleManager.getInstance();
+                for (Title title : titleManager.getTitleList()) {
+                    if (title.getRequiredAreaId().equals(currentArea.getId())) {
+                        if (!playerData.unlockedTitleIds.contains(title.getId())) {
+                            Log.d(TAG, "新しい称号を獲得! -> " + title.getName());
+                            playerData.unlockedTitleIds.add(title.getId());
+                        }
+                    }
+                }
+
                 // 変更を保存
                 dataManager.savePlayerData(this, playerData);
                 Log.d(TAG, currentArea.getName() + " を解放済みとして保存しました。");
             }
+
         }
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -129,4 +141,8 @@ public class ActivityTrackingService extends Service {
         return null;
     }
 
-}
+    }
+
+
+
+
