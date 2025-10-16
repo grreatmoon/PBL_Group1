@@ -2,25 +2,163 @@ package com.example.pbl_gruop1;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-public class MapFragment extends Fragment {
+import com.example.pbl_gruop1.databinding.FragmentMapBinding;
+
+// View.OnTouchListener を実装
+public class MapFragment extends Fragment implements View.OnTouchListener {
+
+    private FragmentMapBinding binding;
+
+    // --- タッチ操作関連の変数 ---
+    private ScaleGestureDetector scaleGestureDetector;
+    private boolean isTouchMoveEnabled = false;
+    private float scaleFactor = 1.0f; // タッチ操作でのスケール
+    private float lastTouchX;
+    private float lastTouchY;
+    private float posX = 0;
+    private float posY = 0;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_map, container, false);
-    }
+        binding = FragmentMapBinding.inflate(inflater, container, false);
 
+        // ScaleGestureDetectorを初期化
+        scaleGestureDetector = new ScaleGestureDetector(requireContext(), new ScaleListener());
+
+        // imageViewがタッチイベントを受け取れるようにリスナーを設定
+        binding.imageView.setOnTouchListener(this);
+
+        // 正しいreturn文
+        return binding.getRoot();
+    } // ★★★ onCreateViewはここで閉じる ★★★
+
+    // onCreateViewの外に、onViewCreatedを正しく配置
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // 移動量を定義
+        final float moveDistance = 30f;
+
+        // --- 十字キーボタンの処理 (移動方向を修正) ---
+        // button2 (上へ移動)
+        binding.button2.setOnClickListener(v -> binding.imageView.setTranslationY(binding.imageView.getTranslationY() + moveDistance));
+        // button1 (下へ移動)
+        binding.button1.setOnClickListener(v -> binding.imageView.setTranslationY(binding.imageView.getTranslationY() - moveDistance));
+        // button3 (左へ移動)
+        binding.button3.setOnClickListener(v -> binding.imageView.setTranslationX(binding.imageView.getTranslationX() + moveDistance));
+        // button4 (右へ移動)
+        binding.button4.setOnClickListener(v -> binding.imageView.setTranslationX(binding.imageView.getTranslationX() - moveDistance));
+
+        // --- 拡大・縮小ボタンの処理 (scaleFactor変数で統一) ---
+        binding.buttonBottomRightUpper.setOnClickListener(v -> {
+            scaleFactor += 0.1f;
+            updateScale();
+        });
+
+        binding.buttonBottomRightLower.setOnClickListener(v -> {
+            // 縮小の下限を設定
+            if (scaleFactor > 0.5f) {
+                scaleFactor -= 0.1f;
+                updateScale();
+            }
+        });
+
+        // タッチ操作切り替えボタン
+        binding.buttonToggleTouch.setOnClickListener(v -> {
+            // isTouchMoveEnabled の true/false を反転させる
+            isTouchMoveEnabled = !isTouchMoveEnabled;
+
+            // ボタンの見た目を変えて、現在の状態を分かりやすくする
+            if (isTouchMoveEnabled) {
+                // オン（有効）のとき: syugou_image_1.png を設定
+                binding.buttonToggleTouch.setImageResource(R.drawable.syougou_image_1);
+            } else {
+                // オフ（無効）のとき: not_available.png を設定
+                binding.buttonToggleTouch.setImageResource(R.drawable.not_available);
+            }
+        });
+    }
+
+    // --- タッチイベントを処理するメソッド ---
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        // ピンチ操作の検出をScaleGestureDetectorに任せる
+        scaleGestureDetector.onTouchEvent(event);
+
+        if (!isTouchMoveEnabled) {
+            return true; // イベントは処理済みとして終了
+        }
+
+        final int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN: {
+                // タッチ開始点を記録 (画面上の絶対座標であるgetRawX/Yが安定)
+                lastTouchX = event.getRawX();
+                lastTouchY = event.getRawY();
+                break;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                // ピンチ操作中は移動させない
+                if (scaleGestureDetector.isInProgress()) {
+                    break;
+                }
+                // 移動後の座標を取得
+                final float rawX = event.getRawX();
+                final float rawY = event.getRawY();
+
+                // 前回の座標からの移動量を計算
+                final float dx = rawX - lastTouchX;
+                final float dy = rawY - lastTouchY;
+
+                // 画像の現在位置に移動量を加算
+                posX += dx;
+                posY += dy;
+                binding.imageView.setTranslationX(posX);
+                binding.imageView.setTranslationY(posY);
+
+                // 現在の座標を次の計算のために保存
+                lastTouchX = rawX;
+                lastTouchY = rawY;
+                break;
+            }
+        }
+        return true; // イベントが処理されたことをシステムに伝える
+    }
+
+    // --- ピンチ操作を処理するインナークラス ---
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+            updateScale();
+            return true;
+        }
+    }
+
+    // --- スケール更新処理を共通化 ---
+    private void updateScale() {
+        // 拡大・縮小率に制限を設ける (例: 0.5倍から3倍まで)
+        scaleFactor = Math.max(0.5f, Math.min(scaleFactor, 3.0f));
+        binding.imageView.setScaleX(scaleFactor);
+        binding.imageView.setScaleY(scaleFactor);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
