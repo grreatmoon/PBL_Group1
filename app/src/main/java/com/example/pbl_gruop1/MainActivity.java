@@ -2,6 +2,7 @@ package com.example.pbl_gruop1;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.gms.location.ActivityRecognition;
@@ -119,10 +120,24 @@ public class MainActivity extends AppCompatActivity {
             permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
+        // OSがAndroid 12(API 31)以上なら、COARSEもセットで要求する必要がある
+        if  (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+        }
+
         // OSがAndroid 10 (API 29) 以上なら、身体活動の権限もチェック
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.ACTIVITY_RECOGNITION);
+            }
+        }
+
+        // OSがAndroid 13 (API 33) 以上なら、通知の権限もチェック
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
 
@@ -193,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
     //通知を受け取るためのPendingIntentを作成
     Intent intent = new Intent(this, ActivityTransitionReceiver.class);
     intent.setAction("com.example.pbl_group1.TRANSITION_ACTION");
-    activityTransitionPendingIntent = PendingIntent.getBroadcast(this, 0, intent,PendingIntent.FLAG_MUTABLE);
+    activityTransitionPendingIntent = PendingIntent.getBroadcast(this, 0, intent,PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
     //APIクライアントを使って監視を開始
     activityRecognitionClient = ActivityRecognition.getClient(this);
