@@ -5,14 +5,14 @@ public class Title {
     private String id; //称号を識別するためのID
     private String name; //称号の表示名
     private String description; //称号の獲得条件の説明
-    private int imageResId; //称号のアイコンの画像のリソースID
+    private String imageName; //称号のアイコンの画像のリソースID
     private String requiredAreaId;  //この称号を開放するために必要なエリアのID
 
-    public Title(String id, String name, String description, int imageResId, String requiredAreaId) {
+    public Title(String id, String name, String description, String imageName, String requiredAreaId) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.imageResId = imageResId;
+        this.imageName = imageName;
         this.requiredAreaId = requiredAreaId;
     }
 
@@ -28,8 +28,8 @@ public class Title {
         return description;
     }
 
-    public int getImageResId() {
-        return imageResId;
+    public String getImageName() {
+        return imageName;
     }
 
     public String getRequiredAreaId() {

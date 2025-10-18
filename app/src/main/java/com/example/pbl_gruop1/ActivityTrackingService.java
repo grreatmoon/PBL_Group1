@@ -13,9 +13,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -27,7 +30,7 @@ public class ActivityTrackingService extends Service {
 
     private static final String TAG = "ActivityTrackingService";
     private static final String CHANNEL_ID = "ActivityTrackingChannel";
-    private static final long LOCATION_UPDATE_INTERVAL = 30000;    //30秒ごとに位置情報を更新
+    private static final long LOCATION_UPDATE_INTERVAL = 15000;    //30秒ごとに位置情報を更新
 
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -40,20 +43,23 @@ public class ActivityTrackingService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
+        Log.d(TAG, "ActivityTrackingServiceが開始されました。");
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("合志市探索アプリ")
                 .setContentText("エリアを探索中です...") // 通知テキストを更新
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(android.R.drawable.ic_menu_compass)
                 .build();
 
         startForeground(1, notification);
+        Log.d(TAG, "startLocationUpdatesメソッドを呼び出します。");
         startLocationUpdates(); // 位置情報の定期更新を開始
 
         return START_STICKY;
     }
 
     private void startLocationUpdates() {
+        Log.d(TAG, "startLocationUpdatesメソッドが実行されました。");
         // 位置情報リクエストの設定を作成
         LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, LOCATION_UPDATE_INTERVAL).build();
 
@@ -61,7 +67,9 @@ public class ActivityTrackingService extends Service {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                Log.d(TAG, "onLocationResultが呼び出されました。");
                 if (locationResult == null) {
+                    Log.w(TAG, "locationResultがnullです。");
                     return;
                 }
                 // 最新の位置情報を取得
@@ -69,26 +77,38 @@ public class ActivityTrackingService extends Service {
                 if (currentLocation != null) {
                     Log.d(TAG, "現在地を更新: " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
                     checkAreaAndUnlock(currentLocation);
+                }else{
+                    Log.w(TAG, "getLastLocation()がnullを返しました。");
                 }
             }
         };
 
         // 位置情報の権限があるか最終確認
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+            Log.d(TAG, "位置情報の権限あり。fusedLocationClient.requestLocationUpdatesを呼び出します。");
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper()).addOnFailureListener(e -> {
+                Log.e(TAG, "GPSの定期更新リクエストの開始に失敗",e);
+            });
+        }else{
+            Log.e(TAG, "位置情報の権限がありません！定期更新を開始できませんでした。");
         }
     }
 
     private void checkAreaAndUnlock(Location currentLocation) {
+
+        Log.d(TAG, "checkAreaAndUnlockメソッド開始。現在地: " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
+
         // エリア管理者を呼び出し、現在地のエリアをチェック
         AreaManager areaManager = AreaManager.getInstance();
         Area currentArea = areaManager.checkCurrentArea(currentLocation);
 
         // もし何かのエリア内にいれば
         if (currentArea != null) {
+            Log.d(TAG, "エリア内にいます: " + currentArea.getName() + " (ID: " + currentArea.getId() + ")");
             // データ管理者を呼び出し、現在のセーブデータをロード
             GameDataManager dataManager = GameDataManager.getInstance();
             PlayerData playerData = dataManager.loadPlayerData(this);
+            Log.d(TAG, "現在の解放済みエリアID: " + playerData.unlockedAreaIds.toString());
 
             // もし、そのエリアが「まだ解放されていなければ」
             if (!playerData.unlockedAreaIds.contains(currentArea.getId())) {
@@ -103,6 +123,8 @@ public class ActivityTrackingService extends Service {
                         if (!playerData.unlockedTitleIds.contains(title.getId())) {
                             Log.d(TAG, "新しい称号を獲得! -> " + title.getName());
                             playerData.unlockedTitleIds.add(title.getId());
+                        } else {
+                            Log.d(TAG, "称号　'" + title.getName() + "' は既に獲得済みです");
                         }
                     }
                 }
@@ -110,8 +132,17 @@ public class ActivityTrackingService extends Service {
                 // 変更を保存
                 dataManager.savePlayerData(this, playerData);
                 Log.d(TAG, currentArea.getName() + " を解放済みとして保存しました。");
+
+                //称号データが更新されたことをアプリ自身に知らせる
+                Intent intent = new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                Log.d(TAG, "称号データ更新のお知らせを送信しました");
+            } else {
+                Log.d(TAG, "エリア '" + currentArea.getName() + "' は既に解放済みです");
             }
 
+        } else {
+            Log.d(TAG, "エリア内にいません");
         }
     }
     @Override
