@@ -15,19 +15,19 @@ import java.util.List;
 
 //RecyclerViewと称号データリスト(allTitles)を結びつけるためのアダプタークラス
 public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouViewHolder>{
-    private final List<SyougouMaster> syougouList;
+    private final List<Title>  titleList;
     private final PlayerData playerData;
     private final Context context; //ダイアログ表示のためにContextを受け取る
 
     /**
      * アダプターのコンストラクタ
      * @param context 表示元のContext
-     * @param syougouList 表示したい称号のマスターデータリスト
+     * @param titleList 表示したい称号のマスターデータリスト
      * @param playerData プレイヤーの所持データ
      */
-    public SyougouAdapter(Context context, List<SyougouMaster> syougouList, PlayerData playerData) {
+    public SyougouAdapter(Context context, List<Title> titleList, PlayerData playerData) {
         this.context = context;
-        this.syougouList = syougouList;
+        this.titleList = titleList;
         this.playerData = playerData;
     }
 
@@ -50,24 +50,27 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
     @Override
     public void onBindViewHolder(@NonNull SyougouViewHolder holder, int position) {
         // 表示する称号データをリストから取得
-        SyougouMaster currentSyougou = syougouList.get(position); //リストの(position)番目の称号データを取得
+        Title currentTitle = titleList.get(position); //リストの(position)番目の称号データを取得
 
-        final String currentSyougouName = currentSyougou.getName(); //SyougouMasterから称号名を取得
-        final String dialogMessage = currentSyougou.getMessage(); //SyougouMasterから称号毎の獲得条件を取得
-        final int imageResId = currentSyougou.getImageResId();    //SyougouMasterから称号毎の画像IDを取得
+        final String currentTitleName = currentTitle.getName(); //Titleから称号名を取得
+        final String dialogMessage = currentTitle.getDescription(); //Titleから称号毎の獲得条件を取得
+        final String imageName = currentTitle.getImageName();
+        final int imageResId = getImageResourceIdByName(imageName);    //Titleから称号毎の画像IDを取得
+        final int lockedImageResId = R.drawable.syougou_image_locked;   //未開放用画像ID
+
 
         // プレイヤーが称号を持っているかどうかの判定
-        if (playerData.unlockedTitleIds.contains(currentSyougou.getId())) {
+        if (playerData.unlockedTitleIds.contains(currentTitle.getId())) {
             //取得済みなら...
-            holder.syougouButton.setText(currentSyougou.getName()); //称号名をそれぞれ設定
+            holder.syougouButton.setText(currentTitle.getName()); //称号名をそれぞれ設定
             holder.syougouButton.setOnClickListener(v -> {
-                showDetailDialog(currentSyougouName, dialogMessage, imageResId);
+                showDetailDialog(currentTitleName, dialogMessage, imageResId);
             });
         } else {
             //未取得なら...
-            holder.syougouButton.setText(currentSyougou.getLockedName()); //称号名を？？？に設定
+            holder.syougouButton.setText("???"); //称号名を？？？に設定
             holder.syougouButton.setOnClickListener(v -> {
-                showDetailDialog("？？？", dialogMessage, imageResId);
+                showDetailDialog("？？？", dialogMessage, lockedImageResId);
             });
         }
     }
@@ -76,7 +79,7 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
     @Override
     public int getItemCount() {
         //リストがnullの場合も考慮して0を返す
-        return syougouList != null ? syougouList.size() : 0;
+        return titleList != null ? titleList.size() : 0;
     }
 
     //1個分のボタンを保持するためのインナークラス
@@ -117,4 +120,15 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
                 .setPositiveButton("閉じる", (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
+    //画像ファイル名からリソースIDを取得するメソッド
+    private int getImageResourceIdByName(String imageName){
+        if (context == null || imageName == null || imageName.isEmpty()) {
+            return 0;   //エラー時は0を返す
+        }
+        android.content.res.Resources resources = context.getResources();
+        //getIdentifierは文字列からリソースIDを見つけるためのAndroid標準機能
+        return resources.getIdentifier(imageName, "drawable",context.getPackageName());
+    }
+
 }
