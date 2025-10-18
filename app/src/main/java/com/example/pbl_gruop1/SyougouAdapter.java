@@ -130,5 +130,23 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         //getIdentifierは文字列からリソースIDを見つけるためのAndroid標準機能
         return resources.getIdentifier(imageName, "drawable",context.getPackageName());
     }
+    /**
+     * 新しいデータでリストを更新し、RecyclerViewに変更を通知するメソッド
+     * @param newTitleList 新しい称号リスト
+     * @param newPlayerData 新しいプレイヤーデータ
+     */
+    public void updateData(List<Title> newTitleList, PlayerData newPlayerData) {
+        // 既存のリストをクリアして新しいデータを追加
+        this.titleList.clear();
+        this.titleList.addAll(newTitleList);
+
+        // プレイヤーデータを更新
+        // PlayerDataクラスにコピー用のメソッドがあるとより安全だが、今回は直接代入する
+        this.playerData.unlockedTitleIds = newPlayerData.unlockedTitleIds;
+
+        // RecyclerViewにデータセットが変更されたことを通知する
+        notifyDataSetChanged();
+    }
+
 
 }

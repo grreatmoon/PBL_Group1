@@ -18,12 +18,12 @@ public class AreaManager {
 
         //ここに合志市のエリアデータを追加していく
 //        areaList.add(new Area("Knct", "熊本高専",32.8803, 130.7583,3000));
-        areaList.add(new Area("Myosenji","妙泉寺",32.8742,130.7819,3000));//とりあえず半径3000で統一
-        areaList.add(new Area("GenkiPark","元気の森公園",32.8883,130.7433,3000));
-        areaList.add(new Area("KoshiCityHall","合志市役所",32.8847,130.7600,3000));
-        areaList.add(new Area("LutherChurch","ルーテル合志教会",32.8825,130.7711,3000));
-        areaList.add(new Area("CountryPark","カントリーパーク",32.8794,130.7589,3000));
-        areaList.add(new Area("BentenMountain","弁天山",32.8931,130.7589,3000));
+        areaList.add(new Area("Myosenji","妙泉寺",32.8742,130.7819,500));
+        areaList.add(new Area("GenkiPark","元気の森公園",32.8883,130.7433,800));
+        areaList.add(new Area("KoshiCityHall","合志市役所",32.8847,130.7600,400));
+        areaList.add(new Area("LutherChurch","ルーテル合志教会",32.8825,130.7711,300));
+        areaList.add(new Area("CountryPark","カントリーパーク",32.8794,130.7589,1000));
+        areaList.add(new Area("BentenMountain","弁天山",32.8931,130.7589,600));
 
     }
 

@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -85,22 +86,29 @@ public class ActivityTrackingService extends Service {
         // 位置情報の権限があるか最終確認
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "位置情報の権限あり。fusedLocationClient.requestLocationUpdatesを呼び出します。");
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper()).addOnFailureListener(e -> {
+                Log.e(TAG, "GPSの定期更新リクエストの開始に失敗",e);
+            });
         }else{
             Log.e(TAG, "位置情報の権限がありません！定期更新を開始できませんでした。");
         }
     }
 
     private void checkAreaAndUnlock(Location currentLocation) {
+
+        Log.d(TAG, "checkAreaAndUnlockメソッド開始。現在地: " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
+
         // エリア管理者を呼び出し、現在地のエリアをチェック
         AreaManager areaManager = AreaManager.getInstance();
         Area currentArea = areaManager.checkCurrentArea(currentLocation);
 
         // もし何かのエリア内にいれば
         if (currentArea != null) {
+            Log.d(TAG, "エリア内にいます: " + currentArea.getName() + " (ID: " + currentArea.getId() + ")");
             // データ管理者を呼び出し、現在のセーブデータをロード
             GameDataManager dataManager = GameDataManager.getInstance();
             PlayerData playerData = dataManager.loadPlayerData(this);
+            Log.d(TAG, "現在の解放済みエリアID: " + playerData.unlockedAreaIds.toString());
 
             // もし、そのエリアが「まだ解放されていなければ」
             if (!playerData.unlockedAreaIds.contains(currentArea.getId())) {
@@ -115,6 +123,8 @@ public class ActivityTrackingService extends Service {
                         if (!playerData.unlockedTitleIds.contains(title.getId())) {
                             Log.d(TAG, "新しい称号を獲得! -> " + title.getName());
                             playerData.unlockedTitleIds.add(title.getId());
+                        } else {
+                            Log.d(TAG, "称号　'" + title.getName() + "' は既に獲得済みです");
                         }
                     }
                 }
@@ -122,8 +132,17 @@ public class ActivityTrackingService extends Service {
                 // 変更を保存
                 dataManager.savePlayerData(this, playerData);
                 Log.d(TAG, currentArea.getName() + " を解放済みとして保存しました。");
+
+                //称号データが更新されたことをアプリ自身に知らせる
+                Intent intent = new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                Log.d(TAG, "称号データ更新のお知らせを送信しました");
+            } else {
+                Log.d(TAG, "エリア '" + currentArea.getName() + "' は既に解放済みです");
             }
 
+        } else {
+            Log.d(TAG, "エリア内にいません");
         }
     }
     @Override
