@@ -13,6 +13,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -40,20 +42,23 @@ public class ActivityTrackingService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
+        Log.d(TAG, "ActivityTrackingServiceが開始されました。");
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("合志市探索アプリ")
                 .setContentText("エリアを探索中です...") // 通知テキストを更新
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(android.R.drawable.ic_menu_compass)
                 .build();
 
         startForeground(1, notification);
+        Log.d(TAG, "startLocationUpdatesメソッドを呼び出します。");
         startLocationUpdates(); // 位置情報の定期更新を開始
 
         return START_STICKY;
     }
 
     private void startLocationUpdates() {
+        Log.d(TAG, "startLocationUpdatesメソッドが実行されました。");
         // 位置情報リクエストの設定を作成
         LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, LOCATION_UPDATE_INTERVAL).build();
 
@@ -61,7 +66,9 @@ public class ActivityTrackingService extends Service {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                Log.d(TAG, "onLocationResultが呼び出されました。");
                 if (locationResult == null) {
+                    Log.w(TAG, "locationResultがnullです。");
                     return;
                 }
                 // 最新の位置情報を取得
@@ -69,13 +76,18 @@ public class ActivityTrackingService extends Service {
                 if (currentLocation != null) {
                     Log.d(TAG, "現在地を更新: " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
                     checkAreaAndUnlock(currentLocation);
+                }else{
+                    Log.w(TAG, "getLastLocation()がnullを返しました。");
                 }
             }
         };
 
         // 位置情報の権限があるか最終確認
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "位置情報の権限あり。fusedLocationClient.requestLocationUpdatesを呼び出します。");
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        }else{
+            Log.e(TAG, "位置情報の権限がありません！定期更新を開始できませんでした。");
         }
     }
 

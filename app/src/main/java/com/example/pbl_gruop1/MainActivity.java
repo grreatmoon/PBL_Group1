@@ -162,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
     private void startAppInitialization(){
         Log.d("INIT","All requests got cleared.proceeding to next step");
         Toast.makeText(this,"All requests got cleared.proceeding to next step",Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "これからActivityTrackingServiceを開始します...");
+        Intent serviceIntent = new Intent(this, ActivityTrackingService.class);
+        startService(serviceIntent);
         startTracking();
     }
 
