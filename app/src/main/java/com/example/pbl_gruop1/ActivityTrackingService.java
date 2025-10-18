@@ -30,7 +30,7 @@ public class ActivityTrackingService extends Service {
 
     private static final String TAG = "ActivityTrackingService";
     private static final String CHANNEL_ID = "ActivityTrackingChannel";
-    private static final long LOCATION_UPDATE_INTERVAL = 30000;    //30秒ごとに位置情報を更新
+    private static final long LOCATION_UPDATE_INTERVAL = 15000;    //30秒ごとに位置情報を更新
 
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;

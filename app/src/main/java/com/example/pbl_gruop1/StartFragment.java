@@ -1,5 +1,10 @@
 package com.example.pbl_gruop1;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +15,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.fragment.NavHostFragment;
 
 public class StartFragment extends Fragment {
+
+    //UI部品とReceiverを変数として持てるようにする
+    private TextView levelTextView;
+    private TextView kaihouritsuTextView;
+    private BroadcastReceiver updateReceiver;
+    private static final String TAG = "StartFragment";
+
+
     public StartFragment() {
     }
 
@@ -32,26 +46,8 @@ public class StartFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //UIを取得
-        TextView levelTextView = view.findViewById(R.id.level_text);
-        TextView kaihouritsuTextView = view.findViewById(R.id.kaihouritsu_text);
-
-        //データを読み込む
-        GameDataManager dataManager = GameDataManager.getInstance();
-        PlayerData playerData = dataManager.loadPlayerData(getContext());
-
-        //解放率を計算
-        AreaManager areaManager = AreaManager.getInstance();
-        int unlockedCount = playerData.unlockedAreaIds.size();  //解放済みのエリア数
-        int totalCount = areaManager.getAreaList().size();      //全エリアの数
-        double liberationRate = 0.0;
-        if (totalCount > 0) {
-            //割り算をして％を計算
-            liberationRate = (double) unlockedCount / totalCount * 100.0;
-        }
-
-        //UIにデータを表示する
-        levelTextView.setText("Lv. " + playerData.level);
-        kaihouritsuTextView.setText("解放率： " + String.format("%.1f", liberationRate) + "%");
+        levelTextView = view.findViewById(R.id.level_text);
+        kaihouritsuTextView = view.findViewById(R.id.kaihouritsu_text);
 
         // fragment_start.xmlで定義したボタンのIDを指定
         Button toMapButton = view.findViewById(R.id.to_map_button);
@@ -67,5 +63,61 @@ public class StartFragment extends Fragment {
             NavHostFragment.findNavController(StartFragment.this)
                     .navigate(R.id.action_startFragment_to_syougouFragment);
         });
+
+        //Receiverを初期化
+        updateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("com.example.pbl_gruop1.TITLE_DATA_UPDATED".equals(intent.getAction())){
+                    Log.d(TAG, "称号データ更新のお知らせを受け取りました");
+                    updateUI();
+                }
+            }
+        };
+        updateUI();
+    }
+
+    //UI更新処理用メソッド
+    private void updateUI() {
+     if (getContext() == null)return;
+        //データを読み込む
+        GameDataManager dataManager = GameDataManager.getInstance();
+        PlayerData playerData = dataManager.loadPlayerData(getContext());
+
+        //解放率を計算
+        AreaManager areaManager = AreaManager.getInstance();
+        int unlockedCount = playerData.unlockedAreaIds.size();  //解放済みのエリア数
+        int totalCount = areaManager.getAreaList().size();      //全エリアの数
+        double liberationRate = 0.0;
+        if (totalCount > 0) {
+            //割り算をして％を計算
+            liberationRate = (double) unlockedCount / totalCount * 100.0;
+        }
+
+        //UIにデータを表示する
+        if (levelTextView != null) {
+            levelTextView.setText("Lv. " + playerData.level);
+        }
+        if (kaihouritsuTextView != null) {
+            kaihouritsuTextView.setText("解放率： " + String.format("%.1f", liberationRate) + "%");
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 画面が表示されるときに受信機を登録
+        IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(updateReceiver, filter);
+        Log.d(TAG, "データ更新受信機を登録");
+        // 画面に戻ってきたときも必ずUIを更新する
+        updateUI();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 画面が見えなくなるときに受信機を解除
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(updateReceiver);
+        Log.d(TAG, "データ更新受信機を解除しました。");
     }
 }
