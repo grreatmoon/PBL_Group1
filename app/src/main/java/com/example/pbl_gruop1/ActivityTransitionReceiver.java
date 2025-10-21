@@ -40,9 +40,6 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                     // ログに記録して、動作しているか確認する
                     Log.d(TAG, "検知した行動: " + activity + ", 状態: " + transitionType);
 
-                    //タイマーのインスタンス(シングルトン)を取得
-                    EnergyTimer timer = EnergyTimer.getInstance();
-
                     //もし「歩行」を「開始」したなら、速度チェックを行う
                     if (event.getActivityType() == DetectedActivity.WALKING && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         Log.d(TAG, "歩行開始を検知。GPSによる速度チェックを開始します。");
@@ -52,18 +49,20 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                             dataChanged = true;
                         }
 
-                        timer.start();
-
                         SpeedChecker speedChecker = new SpeedChecker();
                         speedChecker.checkSpeed(context, new SpeedChecker.SpeedCheckCallback() {
                             @Override
                             public void onSpeedCheckResult(boolean isWalking) {
                                 if (isWalking) {
                                     Log.d(TAG, "速度チェックの結果：「歩行」と判断されました。エネルギー計算を開始します。");
+                                    Intent startIntent = new Intent(context, ActivityTrackingService.class);
+                                    startIntent.setAction("START_ENERGY_TIMER");
+                                    context.startService(startIntent);
                                 } else {
                                     Log.d(TAG, "速度チェックの結果：「車」と判断されました。エネルギー計算は行いません。");
-                                    //エネルギー計算はしない
-                                    timer.stop();
+                                    Intent stopIntent = new Intent(context, ActivityTrackingService.class);
+                                    stopIntent.setAction("STOP_ENERGY_TIMER");
+                                    context.startService(stopIntent);
                                 }
                             }
                         });
@@ -77,26 +76,10 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                             playerData.currentStatus = "停止中";
                             dataChanged = true;
                         }
-
-                        //タイマーを停止し、経過時間を秒で受け取る
-                        long elapsedSeconds = timer.stop();
-                        if (elapsedSeconds > 0) {
-                            //エネルギー変換(例として今は1energy/10second)
-                            long earnedEnergy = elapsedSeconds / 10;
-
-                            if (earnedEnergy > 0) {
-                                Log.d(TAG, elapsedSeconds + "秒間の歩行により、" + earnedEnergy + "エネルギーを獲得");
-                                //データを更新して保存するために、DataManagerBridge(橋渡し機能)を呼び出す
-                                playerData.energy += (int) earnedEnergy;
-                                // 上限チェック (DataManagerBridge と同じ)
-                                if (playerData.energy > playerData.maxEnergy) {
-                                    playerData.energy = playerData.maxEnergy;
-                                }
-                                // データが変更されたのでフラグを立てる
-                                dataChanged = true;
-                            }
-
-                        }
+                        Log.d(TAG, "静止を検知。サービスにタイマー停止を命令します。");
+                        Intent stopIntent = new Intent(context, ActivityTrackingService.class);
+                        stopIntent.setAction("STOP_ENERGY_TIMER");
+                        context.startService(stopIntent);
                     }
                 }
                 if (dataChanged) {
