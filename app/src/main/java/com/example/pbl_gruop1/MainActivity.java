@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        binding.fab.setVisibility(View.GONE);   //メールボックスみたいなやつを非表示
     }
 
     @Override
