@@ -17,7 +17,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.114"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/rounded_text_bg"
+        android:textColor="#FFFFFF"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"/>
 
     <TextView
         android:id="@+id/kaihouritsu_text"
@@ -29,7 +33,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.791"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/rounded_text_bg"
+        android:textColor="#FFFFFF"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"/>
 
     <Button
         android:id="@+id/to_map_button"

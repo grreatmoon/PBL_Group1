@@ -213,6 +213,19 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         PlayerData playerData = dataManager.loadPlayerData(getContext());
         List<String> unlockedIds = playerData.unlockedAreaIds;  //解放済みのIDリストを取得
 
+        AreaManager areaManager = AreaManager.getInstance();
+        int unlockedCount = playerData.unlockedAreaIds.size();  //解放済みのエリア数
+        int totalCount = areaManager.getAreaList().size();      //全エリアの数
+        double liberationRate = 0.0;
+        if (totalCount > 0) {
+            //割り算をして％を計算
+            liberationRate = (double) unlockedCount / totalCount * 100.0;
+        }
+
+        // UIにデータを表示する
+        binding.levelText.setText("Lv. " + playerData.level);
+        binding.kaihouritsuText.setText("解放率： " + String.format("%.1f", liberationRate) + "%");
+
         // まず、全てのマスクを一度「表示」状態に戻す
         binding.maskMyosenji.setVisibility(View.VISIBLE);
         binding.maskGenkipark.setVisibility(View.VISIBLE);
