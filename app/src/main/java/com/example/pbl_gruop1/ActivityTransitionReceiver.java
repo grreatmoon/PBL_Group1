@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.location.ActivityTransitionResult;
@@ -21,6 +23,11 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
             ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
             // 念のため、結果がnullでないことも確認
             if (result != null) {
+
+                GameDataManager dataManager = GameDataManager.getInstance();
+                PlayerData playerData = dataManager.loadPlayerData(context);
+                boolean dataChanged = false;    //データが変更されたか追跡するフラグ
+
                 // 通知されたイベント（歩き始めた、止まったなど）を一つずつ取り出す
                 for (ActivityTransitionEvent event : result.getTransitionEvents()) {
 
@@ -33,12 +40,14 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                     // ログに記録して、動作しているか確認する
                     Log.d(TAG, "検知した行動: " + activity + ", 状態: " + transitionType);
 
-                    //タイマーのインスタンス(シングルトン)を取得
-                    EnergyTimer timer = EnergyTimer.getInstance();
-
                     //もし「歩行」を「開始」したなら、速度チェックを行う
                     if (event.getActivityType() == DetectedActivity.WALKING && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         Log.d(TAG, "歩行開始を検知。GPSによる速度チェックを開始します。");
+
+                        if (!"歩行中".equals(playerData.currentStatus)) {
+                            playerData.currentStatus = "歩行中";
+                            dataChanged = true;
+                        }
 
                         SpeedChecker speedChecker = new SpeedChecker();
                         speedChecker.checkSpeed(context, new SpeedChecker.SpeedCheckCallback() {
@@ -46,11 +55,14 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                             public void onSpeedCheckResult(boolean isWalking) {
                                 if (isWalking) {
                                     Log.d(TAG, "速度チェックの結果：「歩行」と判断されました。エネルギー計算を開始します。");
-                                    //タイマーを開始
-                                    timer.start();
+                                    Intent startIntent = new Intent(context, ActivityTrackingService.class);
+                                    startIntent.setAction("START_ENERGY_TIMER");
+                                    context.startService(startIntent);
                                 } else {
                                     Log.d(TAG, "速度チェックの結果：「車」と判断されました。エネルギー計算は行いません。");
-                                    //エネルギー計算はしない
+                                    Intent stopIntent = new Intent(context, ActivityTrackingService.class);
+                                    stopIntent.setAction("STOP_ENERGY_TIMER");
+                                    context.startService(stopIntent);
                                 }
                             }
                         });
@@ -59,20 +71,23 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
 
                     //もし「歩行」を「終了」または「静止」を「開始」したらタイマーを停止
                     if ((event.getActivityType() == DetectedActivity.WALKING && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_EXIT) || (event.getActivityType() == DetectedActivity.STILL && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER)) {
-                        //タイマーを停止し、経過時間を秒で受け取る
-                        long elapsedSeconds = timer.stop();
-                        if (elapsedSeconds > 0) {
-                            //エネルギー変換(例として今は1energy/30second)
-                            long earnedEnergy = elapsedSeconds / 30;
 
-                            if (earnedEnergy > 0) {
-                                Log.d(TAG, elapsedSeconds + "秒間の歩行により、" + earnedEnergy + "エネルギーを獲得");
-                                //データを更新して保存するために、DataManagerBridge(橋渡し機能)を呼び出す
-                                DataManagerBridge.addEnergy(context, earnedEnergy);
-                            }
-
+                        if (!"停止中".equals(playerData.currentStatus)) {
+                            playerData.currentStatus = "停止中";
+                            dataChanged = true;
                         }
+                        Log.d(TAG, "静止を検知。サービスにタイマー停止を命令します。");
+                        Intent stopIntent = new Intent(context, ActivityTrackingService.class);
+                        stopIntent.setAction("STOP_ENERGY_TIMER");
+                        context.startService(stopIntent);
                     }
+                }
+                if (dataChanged) {
+                    Log.d(TAG, "状態を更新: " + playerData.currentStatus);
+                    dataManager.savePlayerData(context, playerData);
+                    // UI更新のお知らせを送信（エネルギー獲得がなくても状態変更を通知するため）
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED"));
+                    Log.d(TAG, "UI更新のためのお知らせ（Broadcast）を送信しました。");
                 }
             }
         }

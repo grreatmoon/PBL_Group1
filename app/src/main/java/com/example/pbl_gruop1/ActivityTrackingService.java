@@ -26,6 +26,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+
+import android.os.Handler;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import java.util.Objects;
+
 public class ActivityTrackingService extends Service {
 
     private static final String TAG = "ActivityTrackingService";
@@ -34,6 +39,11 @@ public class ActivityTrackingService extends Service {
 
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
+
+    private final Handler energyHandler = new Handler(Looper.getMainLooper());
+    private Runnable energyRunnable;
+    private boolean isEnergyTimerRunning = false;
+    private static final long ENERGY_INTERVAL = 10000; // 10秒 (10000ミリ秒)
 
     @Override
     public void onCreate() {
@@ -44,6 +54,19 @@ public class ActivityTrackingService extends Service {
 
     @Override
     public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
+
+        // ActivityTransitionReceiverからの合図かどうかをチェック
+        if (intent != null && intent.getAction() != null) {
+            String action = intent.getAction();
+            if (Objects.equals(action, "START_ENERGY_TIMER")) {
+                startEnergyTimer();
+                return START_STICKY; // サービスは起動済みなのでタイマー開始だけして終了
+            } else if (Objects.equals(action, "STOP_ENERGY_TIMER")) {
+                stopEnergyTimer();
+                return START_STICKY; // タイマー停止だけして終了
+            }
+        }
+
         Log.d(TAG, "ActivityTrackingServiceが開始されました。");
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("合志市探索アプリ")
@@ -148,6 +171,7 @@ public class ActivityTrackingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopEnergyTimer(); // タイマーを停止
         // サービスが終了するときは、位置情報の更新を停止してバッテリーを節約
         if (fusedLocationClient != null && locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
@@ -164,6 +188,38 @@ public class ActivityTrackingService extends Service {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }
+    }
+
+    private void startEnergyTimer() {
+        // 既にタイマーが作動中なら何もしない
+        if (isEnergyTimerRunning) return;
+        isEnergyTimerRunning = true;
+        Log.d(TAG, "10秒ごとのエネルギー加算タイマーを開始します。");
+
+        energyRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // 1エネルギーを追加
+                DataManagerBridge.addEnergy(ActivityTrackingService.this, 1);
+                // UIに更新を通知
+                Intent intent = new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
+                LocalBroadcastManager.getInstance(ActivityTrackingService.this).sendBroadcast(intent);
+
+                // 10秒後にこのRunnableを再度実行
+                energyHandler.postDelayed(this, ENERGY_INTERVAL);
+            }
+        };
+        // タイマーを即時実行
+        energyHandler.post(energyRunnable);
+    }
+
+    private void stopEnergyTimer() {
+        // タイマーが作動していなければ何もしない
+        if (!isEnergyTimerRunning) return;
+        isEnergyTimerRunning = false;
+        // 予約されていたRunnableをすべてキャンセル
+        energyHandler.removeCallbacks(energyRunnable);
+        Log.d(TAG, "エネルギー加算タイマーを停止しました。");
     }
 
     @Nullable

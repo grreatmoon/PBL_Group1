@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,9 @@ public class StartFragment extends Fragment {
     private TextView levelTextView;
     private TextView kaihouritsuTextView;
     private BroadcastReceiver updateReceiver;
+    private TextView energyText;
+    private ProgressBar energyProgressBar;
+    private TextView statusText;
     private static final String TAG = "StartFragment";
 
 
@@ -48,6 +52,10 @@ public class StartFragment extends Fragment {
         //UIを取得
         levelTextView = view.findViewById(R.id.level_text);
         kaihouritsuTextView = view.findViewById(R.id.kaihouritsu_text);
+        energyText = view.findViewById(R.id.energy_text);
+        energyProgressBar = view.findViewById(R.id.energy_progress_bar);
+        statusText = view.findViewById(R.id.status_text);
+
 
         // fragment_start.xmlで定義したボタンのIDを指定
         Button toMapButton = view.findViewById(R.id.to_map_button);
@@ -101,6 +109,21 @@ public class StartFragment extends Fragment {
         if (kaihouritsuTextView != null) {
             kaihouritsuTextView.setText("解放率： " + String.format("%.1f", liberationRate) + "%");
         }
+
+        //エネルギーのUI更新
+        if (energyText != null) {
+            energyText.setText("エネルギー: " + playerData.energy + " / " + playerData.maxEnergy);
+        }
+        if (energyProgressBar != null) {
+            energyProgressBar.setMax(playerData.maxEnergy);
+            energyProgressBar.setProgress(playerData.energy);
+        }
+
+        //状態テキストを更新(デバッグ用)
+        if (statusText != null) {
+            statusText.setText("状態: " + playerData.currentStatus);
+        }
+
     }
     @Override
     public void onResume() {

@@ -39,7 +39,7 @@ public class GameDataManager {
 
         //JSON文字列をSharedPreferencesに保存
         editor.putString(PLAYER_DATA_KEY, json);
-        editor.apply();
+        editor.commit();
     }
 
     //SharedPreferencesからPlayerDataを読み込むメソッド
