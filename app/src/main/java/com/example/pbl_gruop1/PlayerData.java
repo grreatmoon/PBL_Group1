@@ -32,7 +32,7 @@ public class PlayerData {
     public PlayerData() {
         this.playerName = "New Player";
         this.level = 1;
-        this.energy = 100;
+        this.energy = 0;
         this.maxEnergy = 100;
         this.realWorldDistance = 0.0; // 移動距離を0.0で初期化
         this.unlockedAreaIds = new ArrayList<>();

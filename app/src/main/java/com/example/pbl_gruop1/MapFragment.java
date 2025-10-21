@@ -226,6 +226,11 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         binding.levelText.setText("Lv. " + playerData.level);
         binding.kaihouritsuText.setText("解放率： " + String.format("%.1f", liberationRate) + "%");
 
+        //エネルギーのUI更新
+        binding.energyText.setText("エネルギー: " + playerData.energy + " / " + playerData.maxEnergy);
+        binding.energyProgressBar.setMax(playerData.maxEnergy);
+        binding.energyProgressBar.setProgress(playerData.energy);
+
         // まず、全てのマスクを一度「表示」状態に戻す
         binding.maskMyosenji.setVisibility(View.VISIBLE);
         binding.maskGenkipark.setVisibility(View.VISIBLE);

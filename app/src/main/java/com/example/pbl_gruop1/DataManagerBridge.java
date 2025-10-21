@@ -19,6 +19,9 @@ public class DataManagerBridge {
         PlayerData currentData = dataManager.loadPlayerData(context);
         //読み込んだデータに獲得したエネルギーを加算
         currentData.energy += (int) energyAmount;
+        if (currentData.energy > currentData.maxEnergy) {
+            currentData.energy = currentData.maxEnergy;
+        }
         //新しいデータを保存
         dataManager.savePlayerData(context, currentData);
 
