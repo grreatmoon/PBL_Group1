@@ -230,6 +230,7 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         binding.energyText.setText("エネルギー: " + playerData.energy + " / " + playerData.maxEnergy);
         binding.energyProgressBar.setMax(playerData.maxEnergy);
         binding.energyProgressBar.setProgress(playerData.energy);
+        binding.statusText.setText("状態: " + playerData.currentStatus);
 
         // まず、全てのマスクを一度「表示」状態に戻す
         binding.maskMyosenji.setVisibility(View.VISIBLE);

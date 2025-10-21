@@ -27,6 +27,7 @@ public class StartFragment extends Fragment {
     private BroadcastReceiver updateReceiver;
     private TextView energyText;
     private ProgressBar energyProgressBar;
+    private TextView statusText;
     private static final String TAG = "StartFragment";
 
 
@@ -53,6 +54,8 @@ public class StartFragment extends Fragment {
         kaihouritsuTextView = view.findViewById(R.id.kaihouritsu_text);
         energyText = view.findViewById(R.id.energy_text);
         energyProgressBar = view.findViewById(R.id.energy_progress_bar);
+        statusText = view.findViewById(R.id.status_text);
+
 
         // fragment_start.xmlで定義したボタンのIDを指定
         Button toMapButton = view.findViewById(R.id.to_map_button);
@@ -114,6 +117,11 @@ public class StartFragment extends Fragment {
         if (energyProgressBar != null) {
             energyProgressBar.setMax(playerData.maxEnergy);
             energyProgressBar.setProgress(playerData.energy);
+        }
+
+        //状態テキストを更新(デバッグ用)
+        if (statusText != null) {
+            statusText.setText("状態: " + playerData.currentStatus);
         }
 
     }

@@ -9,6 +9,9 @@ public class PlayerData {
     // プレイヤー名, いらない可能性大？
     public String playerName;
 
+    //歩行、静止のデバッグ用
+    public String currentStatus;
+
     // プレイヤーレベル
     public int level;
 
@@ -37,5 +40,6 @@ public class PlayerData {
         this.realWorldDistance = 0.0; // 移動距離を0.0で初期化
         this.unlockedAreaIds = new ArrayList<>();
         this.unlockedTitleIds = new ArrayList<>();
+        this.currentStatus = "停止中";
     }
 }
