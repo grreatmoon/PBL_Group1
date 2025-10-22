@@ -143,6 +143,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // OSがAndroid9以上ならフォアグラウンドサービスの基本権限をチェック
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE);
+            }
+        }
+        // OSがAndroid 14 (API 34) 以上なら、フォアグラウンドサービスの「位置情報」権限をチェック
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION);
+            }
+        }
+
         if(!permissionsToRequest.isEmpty()){
             ActivityCompat.requestPermissions(
                     this,
