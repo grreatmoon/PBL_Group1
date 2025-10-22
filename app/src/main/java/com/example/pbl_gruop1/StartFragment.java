@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -18,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.fragment.NavHostFragment;
+import android.widget.ImageButton;
 
 public class StartFragment extends Fragment {
 
@@ -58,14 +58,14 @@ public class StartFragment extends Fragment {
 
 
         // fragment_start.xmlで定義したボタンのIDを指定
-        Button toMapButton = view.findViewById(R.id.to_map_button);
+        ImageButton toMapButton = view.findViewById(R.id.to_map_button);
         toMapButton.setOnClickListener(v -> {
             // nav_graph.xmlで定義したAction IDによって遷移
             NavHostFragment.findNavController(StartFragment.this)
                     .navigate(R.id.action_startFragment_to_mapFragment);
         });
 
-        Button toSyougouButton = view.findViewById(R.id.to_syougou_button);
+        ImageButton toSyougouButton = view.findViewById(R.id.to_syougou_button);
         toSyougouButton.setOnClickListener(v -> {
             // nav_graph.xmlで定義したAction IDによって遷移
             NavHostFragment.findNavController(StartFragment.this)
