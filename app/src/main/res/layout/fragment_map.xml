@@ -222,4 +222,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="縮小"/>
 
+    <Button
+        android:id="@+id/button_back_to_start_from_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#FFA500"
+        android:text="戻る"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_bottom_right_lower"
+        app:layout_constraintStart_toEndOf="@+id/button1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
