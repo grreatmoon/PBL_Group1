@@ -140,16 +140,26 @@ public class ActivityTrackingService extends Service {
                 playerData.unlockedAreaIds.add(currentArea.getId());
 
                 // 新しいエリアを発見した時だけ、称号チェックを実行
-                TitleManager titleManager = TitleManager.getInstance();
-                for (Title title : titleManager.getTitleList()) {
-                    if (title.getRequiredAreaId().equals(currentArea.getId())) {
-                        if (!playerData.unlockedTitleIds.contains(title.getId())) {
-                            Log.d(TAG, "新しい称号を獲得! -> " + title.getName());
-                            playerData.unlockedTitleIds.add(title.getId());
-                        } else {
-                            Log.d(TAG, "称号　'" + title.getName() + "' は既に獲得済みです");
-                        }
+                // エリア訪問によって獲得できる称号のIDを組み立てる
+                // 例: Myosenjiエリアなら "title_myosenji" というIDを生成
+                String areaTitleId = "title_" + currentArea.getId().toLowerCase();
+
+                // その称号をまだ持っていないかチェック
+                if (!playerData.unlockedTitleIds.contains(areaTitleId)) {
+                    // TitleManagerに問い合わせて、そのIDが本当に実在する称号か確認する
+                    TitleManager titleManager = TitleManager.getInstance();
+                    Title title = titleManager.getTitleById(areaTitleId);
+
+                    // TitleManagerが称号情報を返してくれたら（実在するIDだったら）
+                    if (title != null) {
+                        Log.d(TAG, "新しい称号を獲得! -> " + title.getName());
+                        // プレイヤーの所持リストにIDを追加
+                        playerData.unlockedTitleIds.add(areaTitleId);
+                    } else {
+                        Log.w(TAG, "ID: " + areaTitleId + " に対応する称号が見つかりませんでした。");
                     }
+                } else {
+                    Log.d(TAG, "エリア訪問称号 '" + areaTitleId + "' は既に獲得済みです");
                 }
 
                 // 変更を保存
