@@ -2,6 +2,8 @@ package com.example.pbl_gruop1;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 // ゲーム内の基本的なデータを保持するクラス
 public class PlayerData {
@@ -29,6 +31,20 @@ public class PlayerData {
 
     // 獲得済みの称号IDのリスト
     public List<String> unlockedTitleIds;
+
+    /**
+     * エリアごとの最終防衛日時を記録するMap。
+     * キー: エリアID (String)
+     * 値: 最終防衛日時 (Long, ミリ秒)
+     */
+    public Map<String, Long> lastDefenceDaysMap = new HashMap<>();
+
+    /**
+     * エリアごとの連続防衛日数を記録するMap。
+     * キー: エリアID (String)
+     * 値: 連続防衛日数 (Integer)
+     */
+    public Map<String, Integer> consecutiveDefenceDaysMap = new HashMap<>();
 
     // デフォルトコンストラクタ
     // 新規プレイヤー作成時の初期値を設定

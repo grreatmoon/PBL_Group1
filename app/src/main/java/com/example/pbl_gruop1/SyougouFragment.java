@@ -9,10 +9,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import java.util.ArrayList;
@@ -36,17 +40,11 @@ public class SyougouFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TitleManager titleManager = TitleManager.getInstance();
-        List<Title> allTitles = titleManager.getTitleList(); //すべての称号リストを取得
 
-        GameDataManager dataManager = GameDataManager.getInstance();
-        PlayerData playerData = dataManager.loadPlayerData(getContext());
-
-        //ローカル変数は削除
-//        RecyclerView recyclerView = view.findViewById(R.id.syougou_recycler_view); //RecyclerViewをxmlから見つける
-//        SyougouAdapter adapter = new SyougouAdapter(getContext(), allTitles, playerData);
-        //クラス変数を使うように修正
+        // RecyclerViewの初期設定
         this.recyclerView = view.findViewById(R.id.syougou_recycler_view);
+        //LinearLayoutManagerの設定を忘れないように追加
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //最初にアダプターを初期化
         Context context = getContext();
@@ -58,18 +56,26 @@ public class SyougouFragment extends Fragment {
             return;
         }
 
+        // データ更新の通知を受け取るための受信機を設定
         updateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //お知らせを受け取ったらUIを更新
                 if ("com.example.pbl_gruop1.TITLE_DATA_UPDATED".equals(intent.getAction())) {
                     Log.d("SyougouFragment","データ更新のお知らせを受信。UIを更新します");
                     updateUI();
                 }
             }
         };
-
         updateUI();
+
+        // 追加した戻るボタンのIDを見つけてくる
+        Button backButton = view.findViewById(R.id.button_back_to_start);
+        // ボタンにクリックリスナーを設定
+        backButton.setOnClickListener(v -> {
+            // NavControllerを使って、指定したIDの画面（fragment_start）へ遷移する
+            NavHostFragment.findNavController(SyougouFragment.this)
+                    .navigate(R.id.action_syougouFragment_to_startFragment); // このIDはnav_graph.xmlで定義します
+        });
 
     }
 
@@ -99,13 +105,27 @@ public class SyougouFragment extends Fragment {
             return; //必要なものがそろっていなければ更新しない
         }
 
-        TitleManager titleManager = TitleManager.getInstance();
-        List<Title> allTitles = titleManager.getTitleList();
-
         GameDataManager dataManager = GameDataManager.getInstance();
         PlayerData playerData = dataManager.loadPlayerData(getContext());
+        TitleManager titleManager = TitleManager.getInstance();
 
-        adapter.updateData(allTitles, playerData);
+        if (playerData == null) {
+            Log.e("SyougouFragment", "PlayerDataの読み込みに失敗しました。UIを更新できません。");
+            return;
+        }
+
+        // 1. 全ての「静的な」称号リストを取得
+        List<Title> allStaticTitles = titleManager.getStaticTitles();
+
+        // 2. プレイヤーがアンロック済みの「動的な」称号リストを取得
+        //    getUnlockedTitlesは静的なものも含むため、動的なものだけをフィルタリングするか、
+        //    Adapter側でIDの重複をうまく処理する必要があります。
+        //    ここでは、よりシンプルな「獲得済みIDリスト」そのものを渡す方法を採用します。
+        List<String> unlockedIds = playerData.unlockedTitleIds;
+
+        // 3. Adapterに「全静的称号リスト」と「獲得済みIDリスト」を渡してUIを更新する
+        adapter.updateData(allStaticTitles, playerData);
+        Log.d("SyougouFragment", "UIを更新しました。静的称号数: " + allStaticTitles.size());
     }
 
 

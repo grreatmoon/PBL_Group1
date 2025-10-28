@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
+import java.util.ArrayList;
 
 //RecyclerViewと称号データリスト(allTitles)を結びつけるためのアダプタークラス
 public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouViewHolder>{
@@ -29,7 +30,32 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         this.context = context;
         this.titleList = titleList;
         this.playerData = playerData;
+
+        //称号:合志マスターの取得条件を追記
+        // プレイヤーが現在持っている称号IDのリストを取得
+        List<String> unlockedIds = this.playerData.unlockedTitleIds;
+        // 取得条件となる6つの称号IDのリストを作成
+        List<String> requiredTitles = new ArrayList<>();
+        requiredTitles.add("title_myosenji");
+        requiredTitles.add("title_genkipark");
+        requiredTitles.add("title_koshicityhall");
+        requiredTitles.add("title_lutherchurch");
+        requiredTitles.add("title_countrypark");
+        requiredTitles.add("title_bentenmountain");
+
+        // プレイヤーが全ての必須称号を持っているかチェック
+        if (unlockedIds.containsAll(requiredTitles)) {
+            // 条件を満たしていれば、「合志マスター」のIDをプレイヤーデータに追加
+            unlockedIds.add("title_koshimaster");
+
+            // (任意) プレイヤーに称号獲得を通知する
+            // Toast.makeText(context, "称号「合志マスター」を獲得しました！", Toast.LENGTH_LONG).show();
+
+            // (任意) 変更を即座に保存する（もしGameDataManagerがあるなら）
+            // GameDataManager.getInstance().savePlayerData(context, this.playerData);
+        }
     }
+    //合志マスターの取得状況チェックここまで
 
     /**
      * ViewHolderが新しく作成されるときに呼び出されるメソッド。
