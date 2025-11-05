@@ -12,11 +12,13 @@ import android.view.MotionEvent;
 // import android.view.ScaleGestureDetector; // 不要なため削除
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.pbl_gruop1.databinding.FragmentMapBinding;
 import java.util.List;
@@ -90,6 +92,17 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         };
         //初回のマスク更新
         updateUnlockedAreas();
+
+        // 1. XMLで定義した「戻るボタン」をIDで探してくる
+        Button backButton = view.findViewById(R.id.button_back_to_start_from_map);
+        // 2. ボタンに「クリックリスナー」を設定する
+        backButton.setOnClickListener(v -> {
+            // 3. NavControllerを使って、指定した画面へ遷移する命令を出す
+            //    このActionは nav_graph.xml で定義する必要があります
+            NavHostFragment.findNavController(MapFragment.this)
+                    .navigate(R.id.action_mapFragment_to_startFragment);
+        });
+
     }
 
     @Override
