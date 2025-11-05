@@ -16,37 +16,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- エリアを押すとダイアログが表示されるようにImageView ⇒ ImageButtonに変更してる -->
         <ImageView
             android:id="@+id/image_view_map_base"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/zentai" /> <ImageView
-        android:id="@+id/mask_myosenji"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/mask_myosenji" /> <ImageView
+            android:src="@drawable/zentai"
+            android:scaleType="fitCenter"
+            />
+
+        <ImageButton
+            android:id="@+id/mask_myosenji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/mask_myosenji"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"/>
+        <ImageButton
         android:id="@+id/mask_genkipark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/mask_genkipark" /> <ImageView
+        android:src="@drawable/mask_genkipark"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"/>
+        <ImageButton
         android:id="@+id/mask_koshi_city_hall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/mask_koshi_city_hall" /> <ImageView
+        android:src="@drawable/mask_koshi_city_hall"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"/>
+        <ImageButton
         android:id="@+id/mask_luther_church"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/mask_luther_church" /> <ImageView
+        android:src="@drawable/mask_luther_church"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"/>
+        <ImageButton
         android:id="@+id/mask_country_park"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/mask_country_park" />
-
-        <ImageView
+        android:src="@drawable/mask_country_park"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"/>
+        <ImageButton
             android:id="@+id/mask_benten_mountain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/mask_benten_mountain" />
+            android:src="@drawable/mask_benten_mountain"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"/>
     </FrameLayout>
 
     <TextView
