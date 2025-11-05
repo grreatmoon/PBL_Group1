@@ -7,21 +7,49 @@
     android:layout_height="match_parent"
     tools:context=".StartFragment">
 
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/start_background_image"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="背景" />
+
     <TextView
         android:id="@+id/level_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Lv."
+        android:text="Lv. 1"
         android:textSize="45sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.114"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/rounded_text_bg"
+        android:background="@android:color/transparent"
         android:textColor="#FFFFFF"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"/>
+        android:paddingRight="8dp"
+        android:elevation="2dp"
+
+        app:layout_constraintTop_toTopOf="@+id/level_background_image"
+        app:layout_constraintBottom_toBottomOf="@+id/level_background_image"
+        app:layout_constraintStart_toStartOf="@+id/level_background_image"
+        app:layout_constraintEnd_toEndOf="@+id/level_background_image"        />
+
+    <ImageView
+        android:id="@+id/level_background_image"
+
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+
+        android:layout_marginTop="16dp"
+        android:contentDescription="レベル背景"
+
+        android:src="@drawable/level_background_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.122"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/kaihouritsu_text"
@@ -73,7 +101,7 @@
     <TextView
         android:id="@+id/status_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:text="状態: 停止中"
         android:textSize="18sp"
@@ -86,27 +114,46 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/to_map_button"
-        android:layout_width="123dp"
-        android:layout_height="49dp"
-        android:text="マップ"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="44dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/to_syougou_button"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
 
-    <Button
-        android:id="@+id/to_syougou_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
-        android:layout_marginEnd="32dp"
-        android:text="称号リスト"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:contentDescription="マップへ移動"
+        android:focusable="true"
+        android:scaleType="centerCrop"
+
+        android:src="@drawable/map_button_image"
+        app:layout_constraintBottom_toTopOf="@+id/to_syougou_button"
+
+        app:layout_constraintDimensionRatio="W,1:1.5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/to_map_button" />
+        app:layout_constraintHorizontal_bias="0.402"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.6" />
+
+    <ImageButton
+        android:id="@+id/to_syougou_button"
+
+        android:layout_width="256dp"
+        android:layout_height="155dp"
+        android:layout_marginBottom="88dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:contentDescription="称号リストへ移動"
+        android:focusable="true"
+        android:scaleType="centerCrop"
+
+        android:src="@drawable/title_list_button_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintDimensionRatio="W,1:1.5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.425"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
