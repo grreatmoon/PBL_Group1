@@ -7,21 +7,25 @@
     android:layout_height="match_parent"
     tools:context=".StartFragment">
 
+
     <ImageView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/start_background_image"
+        android:contentDescription="背景"
         android:scaleType="centerCrop"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/start_background_image"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:contentDescription="背景" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/level_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:background="@android:color/transparent"
         android:elevation="2dp"
         android:fontFamily="@font/maruminya"
@@ -30,21 +34,8 @@
         android:text="Lv. 1"
         android:textColor="#FFFFFF"
         android:textSize="45sp"
-        app:layout_constraintBottom_toBottomOf="@+id/level_background_image"
-        app:layout_constraintEnd_toEndOf="@+id/level_background_image"
-        app:layout_constraintHorizontal_bias="0.483"
-        app:layout_constraintStart_toStartOf="@+id/level_background_image"
-        app:layout_constraintTop_toTopOf="@+id/level_background_image"
-        app:layout_constraintVertical_bias="0.2" />
-
-    <ImageView
-        android:id="@+id/level_background_image"
-        android:layout_width="533dp"
-        android:layout_height="328dp"
-        android:layout_marginStart="-174dp"
-        android:layout_marginTop="4dp"
-        android:contentDescription="レベル背景"
-        android:src="@drawable/level_background_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.056"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
