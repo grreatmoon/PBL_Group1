@@ -8,7 +8,11 @@
         android:id="@+id/mapFragment"
         android:name="com.example.pbl_gruop1.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
     <fragment
         android:id="@+id/startFragment"
         android:name="com.example.pbl_gruop1.StartFragment"
@@ -25,5 +29,9 @@
         android:id="@+id/syougouFragment"
         android:name="com.example.pbl_gruop1.SyougouFragment"
         android:label="fragment_syougou"
-        tools:layout="@layout/fragment_syougou" />
+        tools:layout="@layout/fragment_syougou" >
+        <action
+            android:id="@+id/action_syougouFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
 </navigation>
