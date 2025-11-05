@@ -22,32 +22,29 @@
         android:id="@+id/level_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Lv. 1"
-        android:textSize="45sp"
         android:background="@android:color/transparent"
-        android:textColor="#FFFFFF"
+        android:elevation="2dp"
+        android:fontFamily="@font/maruminya"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:elevation="2dp"
-
-        app:layout_constraintTop_toTopOf="@+id/level_background_image"
+        android:text="Lv. 1"
+        android:textColor="#FFFFFF"
+        android:textSize="45sp"
         app:layout_constraintBottom_toBottomOf="@+id/level_background_image"
+        app:layout_constraintEnd_toEndOf="@+id/level_background_image"
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="@+id/level_background_image"
-        app:layout_constraintEnd_toEndOf="@+id/level_background_image"        />
+        app:layout_constraintTop_toTopOf="@+id/level_background_image"
+        app:layout_constraintVertical_bias="0.2" />
 
     <ImageView
         android:id="@+id/level_background_image"
-
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-
-        android:layout_marginTop="16dp"
+        android:layout_width="533dp"
+        android:layout_height="328dp"
+        android:layout_marginStart="-174dp"
+        android:layout_marginTop="4dp"
         android:contentDescription="レベル背景"
-
         android:src="@drawable/level_background_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.122"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,7 +62,8 @@
         android:background="@drawable/rounded_text_bg"
         android:textColor="#FFFFFF"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"/>
+        android:paddingRight="8dp"
+        android:fontFamily="@font/maruminya"/>
 
     <TextView
         android:id="@+id/energy_text"
@@ -82,6 +80,7 @@
         android:textColor="#FFFFFF"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
+        android:fontFamily="@font/maruminya"
     />
 
     <ProgressBar
@@ -108,13 +107,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/energy_progress_bar"
-
+        android:fontFamily="@font/maruminya"
         android:background="@drawable/rounded_text_bg"
         android:textColor="#FFFFFF"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"/>
 
-    <ImageButton
+    <com.example.pbl_gruop1.AlphaThresholdImageButton
         android:id="@+id/to_map_button"
 
         android:layout_width="0dp"
@@ -135,7 +134,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.6" />
 
-    <ImageButton
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:text="マップ"
+        android:textColor="#000000"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/to_map_button"
+        app:layout_constraintEnd_toEndOf="@+id/to_map_button"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="@+id/to_map_button"
+        app:layout_constraintTop_toTopOf="@+id/to_map_button"
+        app:layout_constraintVertical_bias="0.407"
+        android:fontFamily="@font/jf_dot_font"/>
+
+    <com.example.pbl_gruop1.AlphaThresholdImageButton
         android:id="@+id/to_syougou_button"
 
         android:layout_width="256dp"
@@ -155,5 +170,21 @@
         app:layout_constraintHorizontal_bias="0.425"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.6" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:text="バッヂ"
+        android:textColor="#000000"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/to_syougou_button"
+        app:layout_constraintEnd_toEndOf="@+id/to_syougou_button"
+        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintStart_toStartOf="@+id/to_syougou_button"
+        app:layout_constraintTop_toTopOf="@+id/to_syougou_button"
+        app:layout_constraintVertical_bias="0.491"
+        android:fontFamily="@font/jf_dot_font"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
