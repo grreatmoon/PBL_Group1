@@ -1,7 +1,6 @@
 package com.example.pbl_gruop1;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.BroadcastReceiver;import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
@@ -12,6 +11,7 @@ import android.view.MotionEvent;
 // import android.view.ScaleGestureDetector; // 不要なため削除
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver; // ★ Viewのサイズ取得のために追加
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
@@ -34,6 +34,7 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     private static final float ZOOM_SENSITIVITY = 0.005f; // ズームの感度
 
     private float scaleFactor = 1.0f; // タッチ操作でのスケール
+    private float minScaleFactor = 0.5f; // ★ 縮小の最小値を保持する変数
     private float lastTouchX;
     private float lastTouchY;
     private float posX = 0;
@@ -53,7 +54,6 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         gestureDetector = new GestureDetector(requireContext(), new GestureListener());
 
         // mapContainerではなく、その親であるroot viewにリスナーを設定
-        // これにより、画面全体のタッチイベントを拾えるようになる
         binding.getRoot().setOnTouchListener(this);
 
         return binding.getRoot();
@@ -63,23 +63,40 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        // --- 拡大・縮小ボタンの処理 ---
-//        binding.buttonBottomRightUpper.setOnClickListener(v -> {
-//            scaleFactor += 0.1f;
-//            updateScale();
-//            clampTranslations(); // スケール変更後に移動範囲をチェック
-//            applyTranslation();
-//        });
-//
-//        binding.buttonBottomRightLower.setOnClickListener(v -> {
-//            // 縮小の下限を設定
-//            if (scaleFactor > 0.5f) {
-//                scaleFactor -= 0.1f;
-//                updateScale();
-//                clampTranslations(); // スケール変更後に移動範囲をチェック
-//                applyTranslation();
-//            }
-//        });
+        // ★★★ マップのレイアウトが完了した後に最小スケールを計算する ★★★
+        binding.mapContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // 一度だけ実行すれば良いので、リスナーをすぐに削除
+                binding.mapContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                View parent = (View) binding.mapContainer.getParent();
+                if (parent == null) return;
+
+                float viewWidth = binding.mapContainer.getWidth();
+                float viewHeight = binding.mapContainer.getHeight();
+                float parentWidth = parent.getWidth();
+                float parentHeight = parent.getHeight();
+
+                if (viewWidth > 0 && viewHeight > 0) {
+                    // 横幅に合わせる場合のスケール値
+                    float scaleX = parentWidth / viewWidth;
+                    // 高さで合わせる場合のスケール値
+                    float scaleY = parentHeight / viewHeight;
+                    // より小さい方を最小スケール値とする (これにより全体が収まる)
+                    minScaleFactor = Math.min(scaleX, scaleY);
+
+                    // 初期のスケールが最小値より小さい場合は調整
+                    if (scaleFactor < minScaleFactor) {
+                        scaleFactor = minScaleFactor;
+                        updateScale();
+                        clampTranslations();
+                        applyTranslation();
+                    }
+                }
+            }
+        });
+
 
         updateReceiver = new BroadcastReceiver() {
             @Override
@@ -199,14 +216,15 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
 
     // --- スケール更新処理を共通化 ---
     private void updateScale() {
-        // 拡大・縮小率に制限を設ける (例: 0.5倍から3倍まで)
-        scaleFactor = Math.max(1f, Math.min(scaleFactor, 3.5f));
+        // ★ 拡大・縮小率に制限を設ける (下限は動的に計算したminScaleFactor)
+        scaleFactor = Math.max(minScaleFactor, Math.min(scaleFactor, 3.5f));
         binding.mapContainer.setScaleX(scaleFactor);
         binding.mapContainer.setScaleY(scaleFactor);
     }
 
     // --- 位置更新処理を共通化 ---
     private void applyTranslation() {
+        if (binding == null) return;
         binding.mapContainer.setTranslationX(posX);
         binding.mapContainer.setTranslationY(posY);
     }
@@ -227,46 +245,33 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         float parentWidth = parent.getWidth();
         float parentHeight = parent.getHeight();
 
-        // X軸の移動範囲を計算
-        // scaledWidth < parentWidth の場合、マップは画面中央に寄せるイメージ
-        float minX = (scaledWidth < parentWidth) ? (parentWidth - scaledWidth) / 2 - posX : parentWidth - scaledWidth;
-        float maxX = (scaledWidth < parentWidth) ? (parentWidth - scaledWidth) / 2 - posX : 0;
-
-        // Y軸の移動範囲を計算
-        float minY = (scaledHeight < parentHeight) ? (parentHeight - scaledHeight) / 2 - posY : parentHeight - scaledHeight;
-        float maxY = (scaledHeight < parentHeight) ? (parentHeight - scaledHeight) / 2 - posY : 0;
+        float minX, maxX, minY, maxY;
 
         // X軸の移動範囲を補正
         if (scaledWidth > parentWidth) {
+            // 画像が画面より大きい場合、はみ出た分だけ移動可能
             minX = parentWidth - scaledWidth;
-            maxX = 0;
+            maxX = parentWidth;
         } else {
-            // 画面より小さい場合は中央に配置
+            // 画像が画面より小さい場合、中央に配置
             minX = (parentWidth - scaledWidth) / 2;
             maxX = (parentWidth - scaledWidth) / 2;
-//            minX = parentWidth / 2;
-//            maxX = parentWidth / 2;
         }
 
         // Y軸の移動範囲を補正
         if (scaledHeight > parentHeight) {
+            // 画像が画面より大きい場合、はみ出た分だけ移動可能
             minY = parentHeight - scaledHeight;
-            maxY = 0;
+            maxY = parentHeight;
         } else {
-            // 画面より小さい場合は中央に配置
+            // 画像が画面より小さい場合、中央に配置
             minY = (parentHeight - scaledHeight) / 2;
             maxY = (parentHeight - scaledHeight) / 2;
-//            minY = parentHeight / 2;
-//            maxY = parentHeight / 2;
         }
-
 
         // 計算した範囲内に posX と posY を収める
         posX = Math.max(minX, Math.min(posX, maxX));
         posY = Math.max(minY, Math.min(posY, maxY));
-//        if (scaledHeight < parentHeight) {
-//
-//        }
     }
 
 
