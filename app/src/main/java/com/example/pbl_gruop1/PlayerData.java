@@ -32,6 +32,9 @@ public class PlayerData {
     // 獲得済みの称号IDのリスト
     public List<String> unlockedTitleIds;
 
+    //UFO(敵)の出現エリア
+    public List<String> ufoAreaIds;
+
     /**
      * エリアごとの最終防衛日時を記録するMap。
      * キー: エリアID (String)
@@ -56,6 +59,7 @@ public class PlayerData {
         this.realWorldDistance = 0.0; // 移動距離を0.0で初期化
         this.unlockedAreaIds = new ArrayList<>();
         this.unlockedTitleIds = new ArrayList<>();
+        this.ufoAreaIds = new ArrayList<>();
         this.currentStatus = "停止中";
     }
 }
