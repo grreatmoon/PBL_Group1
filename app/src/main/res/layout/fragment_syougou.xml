@@ -12,18 +12,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
         android:padding="16dp">
 
         <TextView
             android:id="@+id/title_syougou"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
             android:text="称号一覧"
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
         <!-- 各称号ボタンは以下のデータ表示用の棚に一括作成 -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/syougou_recycler_view"
@@ -32,16 +36,16 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2" />
 
+        </LinearLayout>
+
         <Button
             android:id="@+id/button_back_to_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#FFA500"
-            android:text="戻る"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:backgroundTint="#FFA500"
+            android:text="戻る" />
 
     </LinearLayout>
 
