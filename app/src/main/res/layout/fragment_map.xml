@@ -16,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- エリアを押すとダイアログが表示されるようにImageView ⇒ ImageButtonに変更してる -->
         <ImageView
             android:id="@+id/image_view_map_base"
             android:layout_width="0dp"
