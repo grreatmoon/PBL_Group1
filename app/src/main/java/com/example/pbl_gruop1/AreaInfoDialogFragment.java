@@ -66,6 +66,7 @@ public class AreaInfoDialogFragment extends DialogFragment {
         // XMLから部品を見つける
         TextView titleText = view.findViewById(R.id.dialog_area_title);
         TextView messageText = view.findViewById(R.id.dialog_area_message);
+        TextView enemyAlertText = view.findViewById(R.id.dialog_area_enemy_alert);
         Button positiveButton = view.findViewById(R.id.dialog_area_positive_button);
         Button negativeButton = view.findViewById(R.id.dialog_area_negative_button);
 
@@ -82,6 +83,11 @@ public class AreaInfoDialogFragment extends DialogFragment {
         boolean isChallengeable = args.getBoolean(ARG_IS_ENEMY_HERE);
         Title title = (Title) args.getSerializable("title");
 
+        //防衛日数の取得
+        PlayerData playerData = GameDataManager.getInstance().loadPlayerData(getContext());
+        int defenceDays = playerData.consecutiveDefenceDaysMap.getOrDefault(areaId, 0);
+        String defenceDaysText = "連続防衛日数: " + defenceDays + "日";
+
         // タイトルを設定
         titleText.setText(name);
 
@@ -90,12 +96,16 @@ public class AreaInfoDialogFragment extends DialogFragment {
             // --- 解放済みの場合 ---
             String titleName = (title != null) ? title.getName() : "（称号情報なし）";
             String message = "獲得称号: " + titleName + "\n\n"
-                    + "ステータス: 解放済み";
+                    + "ステータス: 解放済み" + "\n\n"
+                    + defenceDaysText;
+
+            enemyAlertText.setVisibility(View.GONE); // まずは非表示にする
 
             if (isChallengeable) {
                 // (敵がいる場合)
-                message += "\n\n" + "！！敵が出現しました！！";
                 messageText.setText(message);
+                enemyAlertText.setVisibility(View.VISIBLE);
+                //非表示→表示
 
                 positiveButton.setText("敵に挑戦する(80消費)");
                 positiveButton.setOnClickListener(v -> {
@@ -116,7 +126,8 @@ public class AreaInfoDialogFragment extends DialogFragment {
         } else {
             // --- 未解放の場合 ---
             String message = "獲得称号: ？？？\n\n"
-                    + "ステータス: 未解放";
+                    + "ステータス: 未解放" + "\n\n"
+                    + defenceDaysText;
             messageText.setText(message);
 
             positiveButton.setText("OK");
