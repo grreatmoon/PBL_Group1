@@ -33,24 +33,54 @@ public class AlphaThresholdImageButton extends AppCompatImageButton {
             return super.onTouchEvent(event);
         }
 
-        // タッチされた座標を取得
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-
-        // 画像の範囲外がタップされた場合はイベントを無視
-        if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
-            return false;
+        Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
+        if (bitmap == null) {
+            return super.onTouchEvent(event);
         }
 
-        // 表示されている画像のBitmapを取得
-        Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
+        // ビュー(ボタン)のサイズ
+        int viewWidth = getWidth();
+        int viewHeight = getHeight();
 
-        // 表示サイズと画像の元サイズから、タップされた位置に対応するピクセルの座標を計算
-        int pixelX = (int) (x * ((float) bitmap.getWidth() / getWidth()));
-        int pixelY = (int) (y * ((float) bitmap.getHeight() / getHeight()));
+        // ビットマップ(元画像)のサイズ
+        int bmpWidth = bitmap.getWidth();
+        int bmpHeight = bitmap.getHeight();
+
+        // scaleType="fitCenter" の計算
+        float scale;
+        float dx = 0, dy = 0; // 画像描画開始位置のオフセット(余白)
+
+        // 画像とビューのアスペクト比を比較
+        if (bmpWidth * viewHeight > viewWidth * bmpHeight) {
+            // ビューの幅に合わせる (画像が横長 or ビューが縦長)
+            scale = (float) viewWidth / (float) bmpWidth;
+            dy = (viewHeight - bmpHeight * scale) * 0.5f; // 上下の余白
+        } else {
+            // ビューの高さに合わせる (画像が縦長 or ビューが横長)
+            scale = (float) viewHeight / (float) bmpHeight;
+            dx = (viewWidth - bmpWidth * scale) * 0.5f; // 左右の余白
+        }
+
+        // 画像が実際に描画されている領域のスケール後のサイズ
+        float scaledWidth = bmpWidth * scale;
+        float scaledHeight = bmpHeight * scale;
+
+        // タッチされた座標
+        float x = event.getX();
+        float y = event.getY();
+
+        // 1. まず、画像の外側（fitCenterの余白）をタップしていないかチェック
+        if (x < dx || x > dx + scaledWidth || y < dy || y > dy + scaledHeight) {
+            return false; // 透明な余白部分をタップしたので無視
+        }
+
+        // 2. ビューの座標から、ビットマップのピクセル座標に変換
+        // (タップ座標 - 余白) / スケール
+        int pixelX = (int) ((x - dx) / scale);
+        int pixelY = (int) ((y - dy) / scale);
 
         // 安全のため、計算後の座標がBitmapの範囲内かチェック
-        if (pixelX < 0 || pixelX >= bitmap.getWidth() || pixelY < 0 || pixelY >= bitmap.getHeight()) {
+        if (pixelX < 0 || pixelX >= bmpWidth || pixelY < 0 || pixelY >= bmpHeight) {
             return false;
         }
 
@@ -60,7 +90,7 @@ public class AlphaThresholdImageButton extends AppCompatImageButton {
         // ピクセルのアルファ値（透明度）を抽出
         int alpha = (pixel >> 24) & 0xff;
 
-        // アルファ値が閾値より低い（透明）なら、タッチイベントを無視して親にも伝えない
+        // アルファ値が閾値より低い（透明）なら、タッチイベントを無視
         if (alpha < ALPHA_THRESHOLD) {
             return false;
         }

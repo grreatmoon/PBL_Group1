@@ -29,7 +29,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             />
 
-        <ImageView
+        <com.example.pbl_gruop1.AlphaThresholdImageButton
             android:id="@+id/mask_myosenji"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -38,9 +38,12 @@
             app:layout_constraintTop_toTopOf="@id/image_view_map_base"
             app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
             app:layout_constraintStart_toStartOf="@id/image_view_map_base"
-            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:contentDescription="妙泉寺エリア"/>
 
-        <ImageView
+        <com.example.pbl_gruop1.AlphaThresholdImageButton
             android:id="@+id/mask_genkipark"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -49,9 +52,12 @@
             app:layout_constraintTop_toTopOf="@id/image_view_map_base"
             app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
             app:layout_constraintStart_toStartOf="@id/image_view_map_base"
-            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:contentDescription="元気の森公園エリア"/>
 
-        <ImageView
+        <com.example.pbl_gruop1.AlphaThresholdImageButton
             android:id="@+id/mask_koshi_city_hall"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -60,9 +66,12 @@
             app:layout_constraintTop_toTopOf="@id/image_view_map_base"
             app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
             app:layout_constraintStart_toStartOf="@id/image_view_map_base"
-            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:contentDescription="合志市役所エリア"/>
 
-        <ImageView
+        <com.example.pbl_gruop1.AlphaThresholdImageButton
             android:id="@+id/mask_luther_church"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -71,9 +80,12 @@
             app:layout_constraintTop_toTopOf="@id/image_view_map_base"
             app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
             app:layout_constraintStart_toStartOf="@id/image_view_map_base"
-            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:contentDescription="ルーテル教会エリア"/>
 
-        <ImageView
+        <com.example.pbl_gruop1.AlphaThresholdImageButton
             android:id="@+id/mask_country_park"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -82,9 +94,12 @@
             app:layout_constraintTop_toTopOf="@id/image_view_map_base"
             app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
             app:layout_constraintStart_toStartOf="@id/image_view_map_base"
-            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:contentDescription="カントリーパークエリア"/>
 
-        <ImageView
+        <com.example.pbl_gruop1.AlphaThresholdImageButton
             android:id="@+id/mask_benten_mountain"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -93,7 +108,10 @@
             app:layout_constraintTop_toTopOf="@id/image_view_map_base"
             app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
             app:layout_constraintStart_toStartOf="@id/image_view_map_base"
-            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:contentDescription="弁天山エリア"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -476,6 +476,13 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     }
 
     private void updateMaskVisibility(View maskView, boolean isUnlocked) {
-        maskView.setVisibility(isUnlocked ? View.GONE : View.VISIBLE);
+        if (isUnlocked) {
+            maskView.setAlpha(0.0f); // 見た目を完全に透明にする
+            maskView.setVisibility(View.VISIBLE); // ただし、存在はさせ続ける
+        } else {
+            maskView.setAlpha(1.0f); // 見た目を不透明に戻す
+            maskView.setVisibility(View.VISIBLE); // 存在させる
+        }
+        //解放後もダイアログ表示させるためにgoneからvisible+alpha0に変更
     }
 }

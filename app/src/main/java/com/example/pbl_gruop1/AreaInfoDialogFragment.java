@@ -3,12 +3,14 @@ package com.example.pbl_gruop1;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 public class AreaInfoDialogFragment extends DialogFragment {
 
@@ -98,12 +100,20 @@ public class AreaInfoDialogFragment extends DialogFragment {
                                 GameDataManager.getInstance().savePlayerData(ctx, currentPlayerData);
 
                                 //ここからが画面遷移
-                                //遷移先のBattleGamenseni.javaは画面遷移を成立させる為だけの空っぽのファイル. 遷移後一瞬で元の画面に戻ってくる
-                                Intent intent = new Intent(ctx, BattleGamenseni.class);
-                                //遷移先にどのエリアの敵かという情報（areaId）を渡す
-                                intent.putExtra("AREA_ID", areaId);
-                                //画面遷移の実行
-                                ctx.startActivity(intent);
+                                // BattleFragmentに渡すためのデータ（Bundle）を作成
+                                Bundle bundle = new Bundle();
+                                // BattleFragment側は "BATTLE_AREA_ID" というキーで受け取るので合わせる
+                                bundle.putString("BATTLE_AREA_ID", areaId);
+
+                                // NavControllerを使って BattleFragment に遷移する
+                                // (nav_graph.xmlで定義したaction IDを指定)
+                                try {
+                                    NavHostFragment.findNavController(AreaInfoDialogFragment.this)
+                                            .navigate(R.id.action_mapFragment_to_battleFragment, bundle);
+                                } catch (Exception e) {
+                                    Log.e("AreaInfoDialog", "BattleFragmentへの遷移に失敗", e);
+                                    Toast.makeText(ctx, "バトル画面への遷移に失敗しました", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
                                 //エネルギーが足りない場合
                                 Toast.makeText(ctx, "エネルギーが足りません！ (必要: " + battleCost + ", 現在: " + currentPlayerData.energy + ")", Toast.LENGTH_LONG).show();
