@@ -1,6 +1,7 @@
 package com.example.pbl_gruop1;
 
-public class Title {
+import java.io.Serializable;
+public class Title implements Serializable{
 
     private String id; //称号を識別するためのID
     private String name; //称号の表示名
@@ -35,7 +36,5 @@ public class Title {
     public String getRequiredAreaId() {
         return requiredAreaId;
     }
-
-
 
 }

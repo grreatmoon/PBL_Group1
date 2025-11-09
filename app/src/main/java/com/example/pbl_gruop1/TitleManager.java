@@ -128,4 +128,19 @@ private Title createConsecutiveDefenceTitle(String areaId, int days) {
     }
     return new Title(titleId, titleName, description, imageName, null);
     }
+
+    public Title getTitleByAreaId(String areaId) {
+        if (areaId == null) {
+            return null;
+        }
+
+        //staticTitlesMapが全ての静的称号を保持している
+        for (Title title : staticTitlesMap.values()) {
+            //各Titleが持つエリアIDと, 引数で受け取ったエリアIDが一致するか判定
+            if (areaId.equals(title.getRequiredAreaId())) {
+                return title; //一致したらTitleオブジェクトを返す
+            }
+        }
+        return null; //最後までループして見つからなければnullを返す
+    }
 }

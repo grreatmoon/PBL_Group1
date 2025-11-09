@@ -26,6 +26,18 @@ public class GameDataManager {
         return instance;
     }
 
+    /** バトルに負けた際にエリアを未解放状態に戻す.
+     *  エリアのダイアログ作成時にエラー吐かないように仮で作っただけだから重複してたら消していい*/
+    public void confiscateArea(Context context, PlayerData playerData, String areaIdToConfiscate) {
+        if (areaIdToConfiscate != null && playerData.unlockedAreaIds != null) {
+            boolean removed = playerData.unlockedAreaIds.remove(areaIdToConfiscate);
+            if (removed) {
+                // エリアが正常に削除された場合のみセーブデータを更新
+                savePlayerData(context, playerData);
+            }
+        }
+    }
+
     //PlayerDataをJSON形式で保存するメソッド
     //SharedPreferencesはAndroidアプリ専用の小さなメモ帳.少量のデータを「Key」と「Value」のペアで保存できる
     //PlayerDataオブジェクト等をSharedPreferencesに書き込むために、Gsonを使ってオブジェクトをJSONに変換している.

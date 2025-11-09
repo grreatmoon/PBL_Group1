@@ -7,73 +7,94 @@
     android:background="#00d76b"
     tools:context=".MapFragment">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/map_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- エリアを押すとダイアログが表示されるようにImageView ⇒ ImageButtonに変更してる -->
         <ImageView
             android:id="@+id/image_view_map_base"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/zentai"
             android:scaleType="fitCenter"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/mask_myosenji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/mask_myosenji"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"/>
-        <ImageButton
-        android:id="@+id/mask_genkipark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/mask_genkipark"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+
+        <ImageView
+            android:id="@+id/mask_genkipark"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/mask_genkipark"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"/>
-        <ImageButton
-        android:id="@+id/mask_koshi_city_hall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/mask_koshi_city_hall"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+
+        <ImageView
+            android:id="@+id/mask_koshi_city_hall"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/mask_koshi_city_hall"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"/>
-        <ImageButton
-        android:id="@+id/mask_luther_church"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/mask_luther_church"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+
+        <ImageView
+            android:id="@+id/mask_luther_church"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/mask_luther_church"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"/>
-        <ImageButton
-        android:id="@+id/mask_country_park"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/mask_country_park"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+
+        <ImageView
+            android:id="@+id/mask_country_park"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/mask_country_park"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"/>
-        <ImageButton
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+
+        <ImageView
             android:id="@+id/mask_benten_mountain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/mask_benten_mountain"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"/>
-    </FrameLayout>
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/level_text"
@@ -168,15 +189,27 @@
 
     <!-- -ボタン -->
 
+    <!-- ▼▼▼ モード切替用のボタンを追加 ▼▼▼ -->
+    <Button
+        android:id="@+id/button_toggle_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="マップ操作モード"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
     <Button
         android:id="@+id/button_back_to_start_from_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#FFA500"
         android:text="戻る"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_bottom_right_lower"
-        app:layout_constraintStart_toEndOf="@+id/button1" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
