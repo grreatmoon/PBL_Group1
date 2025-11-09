@@ -71,7 +71,8 @@ public class EnemyManager {
     /** 指定されたエリアIDが、今日の敵出現エリアかどうかを判定する */
     public boolean isEnemyChallengeable (String areaId) {
         //areaIdがnullでない、かつ、今日の敵エリアIDと一致するかどうかを返す
-        return areaId != null && areaId.equals(todayEnemyAreaId);
+        //「まだ倒されていない」という条件を追加
+        return areaId != null && areaId.equals(todayEnemyAreaId) && !isTodayEnemyDefeated;
     }
 
     public void setTodayEnemyAsDefeated(Context context) {

@@ -158,6 +158,8 @@ public class BattleFragment extends Fragment {
         if (tapCount >= REQUIRED_TAPS) {
             // ★ 勝利
             Log.d(TAG, "勝利！ " + battleAreaId + " のUFOを倒した。");
+            //敵を倒したことを通知
+            EnemyManager.getInstance().setTodayEnemyAsDefeated(getContext());
             // PlayerDataのUFOリストから、倒したエリアIDを削除
             playerData.ufoAreaIds.remove(battleAreaId);
             dataManager.savePlayerData(getContext(), playerData); // 保存

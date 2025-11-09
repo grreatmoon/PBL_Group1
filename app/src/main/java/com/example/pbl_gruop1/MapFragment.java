@@ -33,6 +33,7 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     private FragmentMapBinding binding;
 
     private View.OnTouchListener mapTouchListener;
+    private android.animation.AnimatorSet ufoAnimatorSet;
 
     // --- タッチ操作関連の変数 ---
     private GestureDetector gestureDetector; // ダブルタップ検出用
@@ -331,11 +332,11 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         //プレイヤーデータをロード
         PlayerData playerData = GameDataManager.getInstance().loadPlayerData(getContext());
 
-        //EnemyManagerに日付更新とそれに伴うペナルティ, 再抽選処理を実行させる
-        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
-
-        //上の処理でエリアが没収されている可能性を考慮してプレイヤーデータを再読み込みする
-        playerData = GameDataManager.getInstance().loadPlayerData(getContext());
+//        //EnemyManagerに日付更新とそれに伴うペナルティ, 再抽選処理を実行させる
+//        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
+//
+//        //上の処理でエリアが没収されている可能性を考慮してプレイヤーデータを再読み込みする
+//        playerData = GameDataManager.getInstance().loadPlayerData(getContext());
 
         //エリアIDがリストに含まれているかを .contains() でチェック
         boolean isUnlocked = playerData.unlockedAreaIds.contains(areaId);
@@ -377,6 +378,31 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         updateScale();
         clampTranslations();
         applyTranslation();
+    }
+    private void startFloatingAnimation(View ufoView) {
+        // 既に別のアニメーションが動いていたら止める
+        if (ufoAnimatorSet != null && ufoAnimatorSet.isRunning()) {
+            ufoAnimatorSet.cancel();
+        }
+
+        //上下（Y軸）の動き (1.5秒で10px下に)
+        android.animation.ObjectAnimator floatY = android.animation.ObjectAnimator.ofFloat(ufoView, "translationY", 0f, 50f);
+        floatY.setDuration(1500);
+        floatY.setRepeatCount(android.animation.ObjectAnimator.INFINITE);
+        floatY.setRepeatMode(android.animation.ObjectAnimator.REVERSE);
+        floatY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        //左右（X軸）の動き (2秒で左右に5pxずつ)
+        android.animation.ObjectAnimator floatX = android.animation.ObjectAnimator.ofFloat(ufoView, "translationX", -25f, 25f);
+        floatX.setDuration(2000);
+        floatX.setRepeatCount(android.animation.ObjectAnimator.INFINITE);
+        floatX.setRepeatMode(android.animation.ObjectAnimator.REVERSE);
+        floatX.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        //上下と左右の動きを同時に再生する
+        ufoAnimatorSet = new android.animation.AnimatorSet();
+        ufoAnimatorSet.playTogether(floatY, floatX);
+        ufoAnimatorSet.start();
     }
 
 
@@ -445,32 +471,77 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
 
         GameDataManager dataManager = GameDataManager.getInstance();
         PlayerData playerData = dataManager.loadPlayerData(getContext());
-        List<String> unlockedIds = playerData.unlockedAreaIds;
 
+        //敵の出現チェックをダイアログからこちらに移動
+        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
+        //エリア没収が反映された可能性があるので、playerDataを再読み込み
+        playerData = dataManager.loadPlayerData(getContext());
+
+        List<String> unlockedIds = playerData.unlockedAreaIds;
         AreaManager areaManager = AreaManager.getInstance();
+
+        //解放率の計算・表示
         int unlockedCount = playerData.unlockedAreaIds.size();
         int totalCount = areaManager.getAreaList().size();
         double liberationRate = 0.0;
         if (totalCount > 0) {
             liberationRate = (double) unlockedCount / totalCount * 100.0;
         }
-
-        // UIにデータを表示する
-        binding.levelText.setText("Lv. " + playerData.level);
         binding.kaihouritsuText.setText("解放率");
         binding.kaihouritsuProgressBar.setProgress((int) liberationRate);
+
+        //ステータスの表示
+        binding.levelText.setText("Lv. " + playerData.level);
         binding.energyText.setText(playerData.energy + " / " + playerData.maxEnergy);
         binding.energyProgressBar.setMax(playerData.maxEnergy);
         binding.energyProgressBar.setProgress(playerData.energy);
         binding.statusText.setText(playerData.currentStatus);
 
-        // マスクの表示・非表示を効率的に更新
+        //マスクの表示・非表示
         updateMaskVisibility(binding.maskMyosenji, unlockedIds.contains("Myosenji"));
         updateMaskVisibility(binding.maskGenkipark, unlockedIds.contains("GenkiPark"));
         updateMaskVisibility(binding.maskKoshiCityHall, unlockedIds.contains("KoshiCityHall"));
         updateMaskVisibility(binding.maskLutherChurch, unlockedIds.contains("LutherChurch"));
         updateMaskVisibility(binding.maskCountryPark, unlockedIds.contains("CountryPark"));
         updateMaskVisibility(binding.maskBentenMountain, unlockedIds.contains("BentenMountain"));
+
+
+        //既存のアニメーションを止める
+        if (ufoAnimatorSet != null) {
+            ufoAnimatorSet.cancel();
+            ufoAnimatorSet = null;
+        }
+
+        //各エリアにUFOがいるかチェック
+        boolean ufoMyosenji = EnemyManager.getInstance().isEnemyChallengeable("Myosenji");
+        boolean ufoGenkipark = EnemyManager.getInstance().isEnemyChallengeable("GenkiPark");
+        boolean ufoKoshiCityHall = EnemyManager.getInstance().isEnemyChallengeable("KoshiCityHall");
+        boolean ufoLutherChurch = EnemyManager.getInstance().isEnemyChallengeable("LutherChurch");
+        boolean ufoCountryPark = EnemyManager.getInstance().isEnemyChallengeable("CountryPark");
+        boolean ufoBentenMountain = EnemyManager.getInstance().isEnemyChallengeable("BentenMountain");
+
+        //表示・非表示を切り替え
+        binding.ufoMyosenji.setVisibility(ufoMyosenji ? View.VISIBLE : View.GONE);
+        binding.ufoGenkipark.setVisibility(ufoGenkipark ? View.VISIBLE : View.GONE);
+        binding.ufoKoshiCityHall.setVisibility(ufoKoshiCityHall ? View.VISIBLE : View.GONE);
+        binding.ufoLutherChurch.setVisibility(ufoLutherChurch ? View.VISIBLE : View.GONE);
+        binding.ufoCountryPark.setVisibility(ufoCountryPark ? View.VISIBLE : View.GONE);
+        binding.ufoBentenMountain.setVisibility(ufoBentenMountain ? View.VISIBLE : View.GONE);
+
+        // 表示したUFOのアニメーションを開始 (EnemyManagerはUFOが1体だけなので、if elseでOK)
+        if (ufoMyosenji) {
+            startFloatingAnimation(binding.ufoMyosenji);
+        } else if (ufoGenkipark) {
+            startFloatingAnimation(binding.ufoGenkipark);
+        } else if (ufoKoshiCityHall) {
+            startFloatingAnimation(binding.ufoKoshiCityHall);
+        } else if (ufoLutherChurch) {
+            startFloatingAnimation(binding.ufoLutherChurch);
+        } else if (ufoCountryPark) {
+            startFloatingAnimation(binding.ufoCountryPark);
+        } else if (ufoBentenMountain) {
+            startFloatingAnimation(binding.ufoBentenMountain);
+        }
     }
 
     private void updateMaskVisibility(View maskView, boolean isUnlocked) {
