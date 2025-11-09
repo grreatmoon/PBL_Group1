@@ -9,6 +9,7 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 // import android.view.ScaleGestureDetector; // 不要なため削除
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver; // ★ Viewのサイズ取得のために追加
@@ -26,8 +27,13 @@ import java.util.List;
 // View.OnTouchListener を実装
 public class MapFragment extends Fragment implements View.OnTouchListener {
 
+    //マップ操作にタッチイベントが全部吸われてるからマップ操作とボタン操作を切り替えられるように変更
+    private boolean isMapInteractionEnabled = true; //true⇒マップ操作モード, false⇒エリア操作モード
+
     private FragmentMapBinding binding;
 
+    private View.OnTouchListener mapTouchListener;
+    private ScaleGestureDetector scaleDetector;
     // --- タッチ操作関連の変数 ---
     private GestureDetector gestureDetector; // ダブルタップ検出用
     private boolean isZooming = false; // ダブルタップ後のズーム操作中かどうかのフラグ
@@ -50,11 +56,13 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(inflater, container, false);
 
+        scaleDetector = new ScaleGestureDetector(requireContext(), new ScaleListener());
         // GestureDetectorを初期化
         gestureDetector = new GestureDetector(requireContext(), new GestureListener());
 
+        //binding.mapContainer.setOnTouchListener(this);
         // mapContainerではなく、その親であるroot viewにリスナーを設定
-        binding.getRoot().setOnTouchListener(this);
+        //binding.getRoot().setOnTouchListener(this);
 
         return binding.getRoot();
     }
@@ -101,7 +109,7 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         updateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("com.example.pbl_gruop1.TITLE_DATA_UPDATED".equals(intent.getAction())){
+                if ("com.example.pbl_gruop1.TITLE_DATA_UPDATED".equals(intent.getAction())) {
                     Log.d(TAG, "称号データ更新のお知らせを受け取りました");
                     updateUnlockedAreas();
                 }
@@ -110,16 +118,32 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         //初回のマスク更新
         updateUnlockedAreas();
 
-        // 1. XMLで定義した「戻るボタン」をIDで探してくる
+        //戻るボタン
         Button backButton = view.findViewById(R.id.button_back_to_start_from_map);
-        // 2. ボタンに「クリックリスナー」を設定する
-        backButton.setOnClickListener(v -> {
-            // 3. NavControllerを使って、指定した画面へ遷移する命令を出す
-            //    このActionは nav_graph.xml で定義する必要があります
+        backButton.setOnClickListener(v ->
             NavHostFragment.findNavController(MapFragment.this)
-                    .navigate(R.id.action_mapFragment_to_startFragment);
+                    .navigate(R.id.action_mapFragment_to_startFragment));
+
+        //モード切替ボタンの処理
+        binding.buttonToggleMode.setOnClickListener(v -> {
+            // フラグを反転させる
+            isMapInteractionEnabled = !isMapInteractionEnabled;
+
+            // ボタンのテキストを更新して、現在のモードをユーザーに知らせる
+            if (isMapInteractionEnabled) {
+                binding.buttonToggleMode.setText("マップ操作モード");
+                // マップ操作モードになったら、リスナーを有効化する
+                //binding.mapContainer.setOnTouchListener(mapTouchListener);
+            } else {
+                binding.buttonToggleMode.setText("エリア選択モード");
+            }
+                // ★ onTouchメソッドの有効/無効はonTouch内で判定されるため、
+                // ここではリスナーが設定されている状態にするだけで良い。
+                binding.mapContainer.setOnTouchListener(this);
         });
 
+        //エリアボタンのクリックリスナーを設定
+        setupAreaButtonClickListeners();
     }
 
     @Override
@@ -141,51 +165,107 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     // --- タッチイベントを処理するメソッド ---
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        // 最初にジェスチャー検出器にイベントを渡す
-        gestureDetector.onTouchEvent(event);
+        // まずジェスチャー検出器にイベントを渡す
+        // この２行はモードに関わらず常に実行しても良い
+        boolean scaleHandled = scaleDetector.onTouchEvent(event);
+        boolean gestureHandled = gestureDetector.onTouchEvent(event);
+        return scaleHandled || gestureHandled;
+    }
 
+    // --- ダブルタップとスクロール(ドラッグ移動)を検出するためのインナークラス ---
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            // ★ マップ操作モードでなければ、何もせずfalseを返す
+            if (!isMapInteractionEnabled) {
+                return false;
+            }
+
+            // マップを移動させる
+            posX -= distanceX;
+            posY -= distanceY;
+            clampTranslations();
+            applyTranslation();
+            return true; // イベントを処理したのでtrue
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            // ★ マップ操作モードでなければ、何もせずfalseを返す
+            if (!isMapInteractionEnabled) {
+                return false;
+            }
+
+            // ダブルタップのUPイベントを検知した時だけズーム処理を行う
+            if (e.getAction() == MotionEvent.ACTION_UP) {
+                if (scaleFactor > minScaleFactor * 1.5) { // ある程度拡大されていたら
+                    scaleFactor = minScaleFactor; // 最小サイズに戻す
+                } else {
+                    scaleFactor = scaleFactor * 2.0f; // 2倍に拡大
+                }
+                binding.mapContainer.setPivotX(e.getX());
+                binding.mapContainer.setPivotY(e.getY());
+                updateScale();
+                clampTranslations();
+                applyTranslation();
+            }
+            return true; // イベントを処理したのでtrue
+        }
+        @Override
+        public boolean onDown(MotionEvent e) {
+            // これをtrueにしないと他のジェスチャーが認識されないため必須
+            return true;
+        }
+    }
+
+    // --- ピンチ操作でズームする ScaleListener ---
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            // ★ マップ操作モードでなければ、何もせずfalseを返す
+            if (!isMapInteractionEnabled) {
+                return false;
+            }
+
+            scaleFactor *= detector.getScaleFactor();
+            binding.mapContainer.setPivotX(detector.getFocusX());
+            binding.mapContainer.setPivotY(detector.getFocusY());
+            updateScale();
+            return true; // イベントを処理したのでtrue
+        }
+    }
+
+    //onTouchメソッド⇒GestureListener, ScaleListenerへイベントを知らせる受付係を担当
+    //GestureListener⇒onScroll, onDoubleTapEvent, onDownの指一本での操作を担当
+    //ScaleListener⇒onScaleの指二本操作を担当
+    //ここから以前の記述を復帰させるならコメントアウト外す
+
+        /*if (!isMapInteractionEnabled) {
+            return false;
+        }
+        // 【マップ操作モード】の場合
         final int action = event.getActionMasked();
-
         switch (action) {
-            case MotionEvent.ACTION_DOWN: {
+            case MotionEvent.ACTION_DOWN:
                 lastTouchX = event.getX();
                 lastTouchY = event.getY();
                 break;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                if (isZooming) {
-                    // ダブルタップ後のズーム操作
-                    float dy = event.getY() - lastTouchY;
-                    scaleFactor -= dy * ZOOM_SENSITIVITY; // 下にスライドで縮小、上で拡大
-                    updateScale();
-                    lastTouchY = event.getY(); // 座標を更新
-                } else {
-                    // 通常のパン（移動）操作
+            case MotionEvent.ACTION_MOVE:
+                // ピンチ操作中でなければ、マップを移動させる
+                if (!scaleDetector.isInProgress()) {
                     final float dx = event.getX() - lastTouchX;
                     final float dy = event.getY() - lastTouchY;
                     posX += dx;
                     posY += dy;
-                    lastTouchX = event.getX();
-                    lastTouchY = event.getY();
                 }
-                // 移動範囲の制限をかける
-                clampTranslations();
-                // 実際にViewの位置を更新
-                applyTranslation();
-                break;
-            }
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL: {
-                // 指が離れたらズームモードを解除
-                if (isZooming) {
-                    isZooming = false;
-                }
-                // 移動範囲の最終チェック
+                lastTouchX = event.getX();
+                lastTouchY = event.getY();
                 clampTranslations();
                 applyTranslation();
                 break;
-            }
         }
+        // マップ操作モードでは、イベントを消費したことを示すためにtrueを返す
         return true;
     }
 
@@ -193,6 +273,20 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDoubleTapEvent(MotionEvent e) {
+            // ダブルタップされたら、現在のスケールに応じて拡大または縮小する
+            if (scaleFactor > minScaleFactor * 1.5) { // ある程度拡大されていたら
+                scaleFactor = minScaleFactor; // 最小サイズに戻す
+            } else {
+                scaleFactor = scaleFactor * 2.0f; // 2倍に拡大
+            }
+            // ピボット（拡大中心）をタップした点に設定
+            binding.mapContainer.setPivotX(e.getX());
+            binding.mapContainer.setPivotY(e.getY());
+            updateScale();
+            clampTranslations();
+            applyTranslation();
+            return true;
+            /*
             if (e.getAction() == MotionEvent.ACTION_DOWN) {
                 // ダブルタップの2回目のタップが開始された
                 isZooming = true;
@@ -204,8 +298,9 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
                 lastTouchY = e.getY();
             }
             return true;
-        }
+        }*/
 
+/*
         @Override
         public boolean onDown(MotionEvent e) {
             // これをtrueにしないと他のジェスチャーが認識されない
@@ -213,6 +308,72 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         }
     }
 
+    // --- ピンチ操作でズームする ScaleListener ---
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+            // ピボット（拡大中心）をピンチ操作の中心点に設定
+            binding.mapContainer.setPivotX(detector.getFocusX());
+            binding.mapContainer.setPivotY(detector.getFocusY());
+            updateScale();
+            return true;
+        }
+    }*/
+
+    // ▼▼▼ エリアボタンのリスナー設定をまとめるメソッド（新規追加） ▼▼▼
+    private void setupAreaButtonClickListeners() {
+        binding.maskMyosenji.setOnClickListener(v -> showAreaInfoDialog("Myosenji"));
+        binding.maskGenkipark.setOnClickListener(v -> showAreaInfoDialog("GenkiPark"));
+        binding.maskKoshiCityHall.setOnClickListener(v -> showAreaInfoDialog("KoshiCityHall"));
+        binding.maskLutherChurch.setOnClickListener(v -> showAreaInfoDialog("LutherChurch"));
+        binding.maskCountryPark.setOnClickListener(v -> showAreaInfoDialog("CountryPark"));
+        binding.maskBentenMountain.setOnClickListener(v -> showAreaInfoDialog("BentenMountain"));
+    }
+
+    private void showAreaInfoDialog(String areaId) {
+        if (getContext() == null) return;
+
+        //モードチェック: エリア選択モードでなければダイアログは表示しない
+        if (isMapInteractionEnabled) {
+            // 親切なフィードバックをユーザーに与える
+            android.widget.Toast.makeText(getContext(), "エリア選択モードに切り替えてください", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Area targetArea = AreaManager.getInstance().getAreaById(areaId);
+        if (targetArea == null) {
+            Log.e(TAG, "指定されたエリアIDが見つかりません: " + areaId);
+            return;
+        }
+
+        //プレイヤーデータをロード
+        PlayerData playerData = GameDataManager.getInstance().loadPlayerData(getContext());
+
+        //EnemyManagerに日付更新とそれに伴うペナルティ, 再抽選処理を実行させる
+        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
+
+        //上の処理でエリアが没収されている可能性を考慮してプレイヤーデータを再読み込みする
+        playerData = GameDataManager.getInstance().loadPlayerData(getContext());
+
+        //エリアIDがリストに含まれているかを .contains() でチェック
+        boolean isUnlocked = playerData.unlockedAreaIds.contains(areaId);
+
+        //このエリアに今日, 挑戦可能な敵がいるか確認する
+        boolean isChallengeable = EnemyManager.getInstance().isEnemyChallengeable(areaId);
+
+        //対応する称号情報を取得
+        Title title = TitleManager.getInstance().getTitleByAreaId(areaId);
+
+        AreaInfoDialogFragment dialog = AreaInfoDialogFragment.newInstance(
+                areaId,
+                targetArea.getName(),
+                isUnlocked,
+                title,
+                isChallengeable
+        );
+        dialog.show(getChildFragmentManager(), "AreaInfoDialog");
+    }
 
     // --- スケール更新処理を共通化 ---
     private void updateScale() {
