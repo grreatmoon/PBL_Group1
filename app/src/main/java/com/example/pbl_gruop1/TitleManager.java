@@ -22,6 +22,10 @@ public class TitleManager {
         staticTitlesMap.put("title_countrypark", new Title("title_countrypark", "パークの探検家", "カントリーパークを訪れる", "syougou_image_countrypark", "CountryPark"));
         staticTitlesMap.put("title_bentenmountain", new Title("title_bentenmountain", "弁天山の征服者", "弁天山を訪れる", "syougou_image_bentenmountain", "BentenMountain"));
         staticTitlesMap.put("title_koshimaster", new Title("title_koshimaster", "合志マスター", "合志市の全スポットを訪れる", "syougou_image_koshimaster", "KoshiMaster"));
+        staticTitlesMap.put("title_god_finger", new Title("title_god_finger", "神の指", "バトルで80回以上のタップを記録する", "syougou_image_locked", null));
+        staticTitlesMap.put("title_defence_10", new Title("title_defence_10", "駆け出し防衛者", "任意のエリアを10日連続で防衛する", "syougou_image_locked", null));
+        staticTitlesMap.put("title_defence_100", new Title("title_defence_100", "中堅守護者", "任意のエリアを100日連続で防衛する", "syougou_image_locked", null));
+        staticTitlesMap.put("title_defence_365", new Title("title_defence_365", "合志市の英雄", "任意のエリアを365日連続で防衛する", "syougou_image_locked", null));
     }
 
     public static synchronized TitleManager getInstance() {

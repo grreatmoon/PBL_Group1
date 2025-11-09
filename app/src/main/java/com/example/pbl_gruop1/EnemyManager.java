@@ -83,13 +83,7 @@ public class EnemyManager {
 
                     playerData.lastDefenceDaysMap.put(areaId, now);
                     playerData.consecutiveDefenceDaysMap.put(areaId, consecutiveDays);
-
-                    if (consecutiveDays >= 2){
-                        String newTitleId = "title_" + areaId + "_defence_" + consecutiveDays;
-                        if (!playerData.unlockedTitleIds.contains(newTitleId)) {
-                            playerData.unlockedTitleIds.add(newTitleId);
-                        }
-                    }
+                    checkDefenceMilestoneTitles(playerData, consecutiveDays);
                 }
             }
 
@@ -159,6 +153,28 @@ public class EnemyManager {
         return cal.get(java.util.Calendar.YEAR) == cal2.get(java.util.Calendar.YEAR) &&
                 cal.get(java.util.Calendar.DAY_OF_YEAR) == cal2.get(java.util.Calendar.DAY_OF_YEAR);
     }
-
+    private void checkDefenceMilestoneTitles(PlayerData playerData, int consecutiveDays) {
+        // 10日
+        if (consecutiveDays >= 10) {
+            String newTitleId = "title_defence_10";
+            if (!playerData.unlockedTitleIds.contains(newTitleId)) {
+                playerData.unlockedTitleIds.add(newTitleId);
+            }
+        }
+        // 100日
+        if (consecutiveDays >= 100) {
+            String newTitleId = "title_defence_100";
+            if (!playerData.unlockedTitleIds.contains(newTitleId)) {
+                playerData.unlockedTitleIds.add(newTitleId);
+            }
+        }
+        // 365日
+        if (consecutiveDays >= 365) {
+            String newTitleId = "title_defence_365";
+            if (!playerData.unlockedTitleIds.contains(newTitleId)) {
+                playerData.unlockedTitleIds.add(newTitleId);
+            }
+        }
+    }
 }
 

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +39,7 @@ public class BattleFragment extends Fragment {
     private TextView tapCountText;
     private Button attackButton;
     private ImageView ufoImage;
+    private ProgressBar timeProgressBar;
 
     // ゲームロジック用
     private CountDownTimer gameTimer;
@@ -67,8 +69,12 @@ public class BattleFragment extends Fragment {
         timerText = view.findViewById(R.id.timer_text);
         tapCountText = view.findViewById(R.id.tap_count_text);
         attackButton = view.findViewById(R.id.attack_button);
-        ufoImage = view.findViewById(R.id.ufo_image_battle);
-
+        timeProgressBar = view.findViewById(R.id.time_progress_bar);
+        ufoImage = view.findViewById(R.id.ufo_image);
+        timeProgressBar.setMax((int) GAME_TIME_MS);
+        timeProgressBar.setProgress((int) GAME_TIME_MS);
+        timeProgressBar.setMax((int) GAME_TIME_MS);
+        timeProgressBar.setProgress((int) GAME_TIME_MS);
         // MapFragmentから渡された「BATTLE_AREA_ID」を受け取る
         if (getArguments() != null) {
             battleAreaId = getArguments().getString("BATTLE_AREA_ID");
@@ -131,6 +137,8 @@ public class BattleFragment extends Fragment {
             public void onTick(long millisUntilFinished) {
                 // 残り時間を秒単位で表示
                 timerText.setText("残り時間: " + (millisUntilFinished / 1000 + 1));
+
+                timeProgressBar.setProgress((int) millisUntilFinished);
             }
 
             // 10秒経ったら呼ばれる
@@ -140,6 +148,8 @@ public class BattleFragment extends Fragment {
                 timerText.setText("終了！");
                 attackButton.setEnabled(false); // ボタンを押せなくする
                 stopUfoAnimation(); // アニメーション停止
+
+                timeProgressBar.setProgress(0);
 
                 // 勝敗判定
                 checkResult();
@@ -154,9 +164,10 @@ public class BattleFragment extends Fragment {
 
         GameDataManager dataManager = GameDataManager.getInstance();
         PlayerData playerData = dataManager.loadPlayerData(getContext());
-
+        boolean titleAdded = checkTapTitle(playerData, tapCount);
+        //タップ数を確認して称号を与えるか与えないか判断
         if (tapCount >= REQUIRED_TAPS) {
-            // ★ 勝利
+            // 勝利
             Log.d(TAG, "勝利！ " + battleAreaId + " のUFOを倒した。");
             //敵を倒したことを通知
             EnemyManager.getInstance().setTodayEnemyAsDefeated(getContext());
@@ -177,6 +188,10 @@ public class BattleFragment extends Fragment {
         } else {
             // ★ 敗北
             Log.d(TAG, "敗北... UFOはまだ残っている。");
+
+            if (titleAdded) {
+                dataManager.savePlayerData(getContext(), playerData);
+            }
 
             // 敗北ダイアログ（データは変更しない）
             new AlertDialog.Builder(getContext())
@@ -236,5 +251,19 @@ public class BattleFragment extends Fragment {
             gameTimer.cancel();
         }
         stopUfoAnimation();
+    }
+    private boolean checkTapTitle(PlayerData playerData, int taps) {
+        if (taps > 80) {
+            String newTitleId = "title_god_finger";
+            if (!playerData.unlockedTitleIds.contains(newTitleId)) {
+                playerData.unlockedTitleIds.add(newTitleId);
+
+                // (任意) 称号獲得をトーストで通知
+                // android.widget.Toast.makeText(getContext(), "称号「神の指」を獲得！", android.widget.Toast.LENGTH_SHORT).show();
+
+                return true; // データが変更された
+            }
+        }
+        return false; // データ変更なし
     }
 }

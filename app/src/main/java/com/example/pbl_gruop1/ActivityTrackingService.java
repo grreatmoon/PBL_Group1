@@ -29,6 +29,8 @@ import com.google.android.gms.location.Priority;
 
 import android.os.Handler;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.util.List;
 import java.util.Objects;
 
 public class ActivityTrackingService extends Service {
@@ -162,6 +164,25 @@ public class ActivityTrackingService extends Service {
                     }
                 } else {
                     Log.d(TAG, "エリア訪問称号 '" + areaTitleId + "' は既に獲得済みです");
+                }
+
+                // 必要な称号のリストを作成
+                List<String> requiredTitles = new java.util.ArrayList<>();
+                requiredTitles.add("title_myosenji");
+                requiredTitles.add("title_genkipark");
+                requiredTitles.add("title_koshicityhall");
+                requiredTitles.add("title_lutherchurch");
+                requiredTitles.add("title_countrypark");
+                requiredTitles.add("title_bentenmountain");
+
+                // プレイヤーが全ての必須称号を持っているかチェック
+                if (playerData.unlockedTitleIds.containsAll(requiredTitles)) {
+                    String koshiMasterId = "title_koshimaster";
+                    // まだ合志マスターを持っていなければ追加
+                    if (!playerData.unlockedTitleIds.contains(koshiMasterId)) {
+                        playerData.unlockedTitleIds.add(koshiMasterId);
+                        Log.d(TAG, "称号「合志マスター」を獲得しました！");
+                    }
                 }
 
                 // 変更を保存
