@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_mapFragment_to_startFragment"
             app:destination="@id/startFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_battleFragment"
+            app:destination="@id/battleFragment" />
     </fragment>
     <fragment
         android:id="@+id/startFragment"
@@ -34,4 +37,9 @@
             android:id="@+id/action_syougouFragment_to_startFragment"
             app:destination="@id/startFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/battleFragment"
+        android:name="com.example.pbl_gruop1.BattleFragment"
+        android:label="バトル"
+        tools:layout="@layout/fragment_battle" />
 </navigation>
