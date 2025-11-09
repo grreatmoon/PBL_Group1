@@ -45,10 +45,12 @@ public class BattleFragment extends Fragment {
     private boolean isGameFinished = false;
     private String battleAreaId; // MapFragmentから渡された「戦うUFOのエリアID」
 
-    // (↓) ステップ6のアニメーション用
+    // アニメーション用
     private Handler animationHandler = new Handler(Looper.getMainLooper());
     private boolean isUfoImage1 = true;
 
+    //ふわふわ移動用
+    private android.animation.AnimatorSet ufoFloatAnimatorSet;
     public BattleFragment() { }
 
     @Nullable
@@ -85,11 +87,39 @@ public class BattleFragment extends Fragment {
             }
         });
 
-        // ステップ6: UFOアニメーションを開始
+        //UFOアニメーションを開始(回転しているように見えるやつ)
         startUfoAnimation();
+        //ふわふわ動くアニメーションを開始
+        startFloatingAnimation();
 
-        // ゲームタイマーを開始
+        //ゲームタイマーを開始
         startGameTimer();
+    }
+
+    //UFOを上下左右に動かすアニメーション
+    private void startFloatingAnimation() {
+        if (ufoImage == null) return; // UFO画像がなければ何もしない
+
+        //上下（Y軸）の動き
+        //1.5秒かけて、現在の位置(0f)から 30f 下の位置まで移動する
+        android.animation.ObjectAnimator floatY = android.animation.ObjectAnimator.ofFloat(ufoImage, "translationY", 0f, 120f);
+        floatY.setDuration(1500); // 1.5秒
+        floatY.setRepeatCount(android.animation.ObjectAnimator.INFINITE); // 無限に繰り返す
+        floatY.setRepeatMode(android.animation.ObjectAnimator.REVERSE); // 往復（下まで行ったら上に戻る）
+        floatY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator()); // ゆっくり始まってゆっくり終わる
+
+        //左右（X軸）の動き
+        //2秒かけて、左(-20f)から右(20f)まで移動する
+        android.animation.ObjectAnimator floatX = android.animation.ObjectAnimator.ofFloat(ufoImage, "translationX", -120f, 120f);
+        floatX.setDuration(2000); // 2秒（Y軸とタイミングをずらす）
+        floatX.setRepeatCount(android.animation.ObjectAnimator.INFINITE);
+        floatX.setRepeatMode(android.animation.ObjectAnimator.REVERSE);
+        floatX.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        //上下と左右の動きを同時に再生する
+        ufoFloatAnimatorSet = new android.animation.AnimatorSet();
+        ufoFloatAnimatorSet.playTogether(floatY, floatX);
+        ufoFloatAnimatorSet.start();
     }
 
     // 10秒のカウントダウンタイマー
@@ -189,6 +219,9 @@ public class BattleFragment extends Fragment {
 
     private void stopUfoAnimation() {
         animationHandler.removeCallbacks(ufoAnimationRunnable);
+        if (ufoFloatAnimatorSet != null) {
+            ufoFloatAnimatorSet.cancel();
+        }
     }
 
     // 画面が破棄されるときにタイマーを止める（メモリリーク防止）

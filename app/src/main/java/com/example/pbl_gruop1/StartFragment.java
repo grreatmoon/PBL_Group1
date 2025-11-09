@@ -27,6 +27,7 @@ public class StartFragment extends Fragment {
     private BroadcastReceiver updateReceiver;
     private TextView energyText;
     private ProgressBar energyProgressBar;
+    private ProgressBar kaihouritsuProgressBar;
     private TextView statusText;
     private static final String TAG = "StartFragment";
 
@@ -54,6 +55,7 @@ public class StartFragment extends Fragment {
         kaihouritsuTextView = view.findViewById(R.id.kaihouritsu_text);
         energyText = view.findViewById(R.id.energy_text);
         energyProgressBar = view.findViewById(R.id.energy_progress_bar);
+        kaihouritsuProgressBar = view.findViewById(R.id.kaihouritsu_progress_bar);
         statusText = view.findViewById(R.id.status_text);
 
 
@@ -107,12 +109,15 @@ public class StartFragment extends Fragment {
             levelTextView.setText("Lv. " + playerData.level);
         }
         if (kaihouritsuTextView != null) {
-            kaihouritsuTextView.setText("解放率： " + String.format("%.1f", liberationRate) + "%");
+            kaihouritsuTextView.setText("解放率");
+        }
+        if (kaihouritsuProgressBar != null) {
+            kaihouritsuProgressBar.setProgress((int) liberationRate);
         }
 
         //エネルギーのUI更新
         if (energyText != null) {
-            energyText.setText("エネルギー: " + playerData.energy + " / " + playerData.maxEnergy);
+            energyText.setText(playerData.energy + " / " + playerData.maxEnergy);
         }
         if (energyProgressBar != null) {
             energyProgressBar.setMax(playerData.maxEnergy);
@@ -121,7 +126,7 @@ public class StartFragment extends Fragment {
 
         //状態テキストを更新(デバッグ用)
         if (statusText != null) {
-            statusText.setText("状態: " + playerData.currentStatus);
+            statusText.setText(playerData.currentStatus);
         }
 
     }
