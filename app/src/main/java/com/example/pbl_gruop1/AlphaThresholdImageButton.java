@@ -28,6 +28,11 @@ public class AlphaThresholdImageButton extends AppCompatImageButton {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //マップ操作モードの時に地図に当たり判定がすわれないようにするためのコード
+        if (!isClickable()) {
+            return false;
+        }
+
         // 画像が設定されていない、またはBitmapでない場合は通常の動作
         if (getDrawable() == null || !(getDrawable() instanceof BitmapDrawable)) {
             return super.onTouchEvent(event);

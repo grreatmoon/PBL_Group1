@@ -1,14 +1,18 @@
 package com.example.pbl_gruop1;
 
 import android.app.Dialog;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -43,99 +47,114 @@ public class AreaInfoDialogFragment extends DialogFragment {
     }
 
     //ダイアログの見た目を設定
-    @NonNull
+    @Nullable
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        Bundle args = getArguments();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        if (args != null) {
-            // Bundleから情報を取り出す
-            String areaId = args.getString(ARG_AREA_ID);
-            String name = args.getString(ARG_NAME);
-            boolean isUnlocked = args.getBoolean(ARG_IS_UNLOCKED);
-            boolean isChallengeable = args.getBoolean(ARG_IS_ENEMY_HERE);
-
-            builder.setTitle(name); // ダイアログのタイトルは共通
-
-            if (isUnlocked) {
-                //解放済みの場合の処理
-
-                Title title = (Title) args.getSerializable("title");
-
-                String titleName;
-                if (title != null) {
-                    titleName = title.getName(); // 称号が見つかればその名前を取得
-                } else {
-                    //念のため、見つからない場合の安全な表示を用意
-                    titleName = "（称号情報なし）";
-                }
-
-                String message = "獲得称号: " + titleName + "\n\n"
-                        + "ステータス: 解放済み";
-
-                //もしこのエリアに敵がいるなら戻るボタン+バトル画面への遷移
-                if (isChallengeable) {
-                    message += "\n\n" + "！！敵が出現しました！！";
-
-                builder.setMessage(message)
-                        //戻るボタン
-                        .setNegativeButton("戻る", (dialog, id) -> dialog.dismiss())
-                        //"敵に挑戦する"ボタン
-                        .setPositiveButton("敵に挑戦する(エネルギーを80消費)", (dialog, id) -> {
-
-                            // Contextがnullだとクラッシュするので安全のためにチェック
-                            android.content.Context ctx = getActivity();
-                            if (ctx == null) return;
-
-                            //最新のプレイヤーデータをその場で読み込む
-                            PlayerData currentPlayerData = GameDataManager.getInstance().loadPlayerData(ctx);
-                            int battleCost = 80;
-
-                            //エネルギーが足りるかチェック
-                            if (currentPlayerData.energy >= battleCost) {
-                                //エネルギー消費
-                                currentPlayerData.energy -= battleCost;
-                                //減らした結果を即座に保存する
-                                GameDataManager.getInstance().savePlayerData(ctx, currentPlayerData);
-
-                                //ここからが画面遷移
-                                // BattleFragmentに渡すためのデータ（Bundle）を作成
-                                Bundle bundle = new Bundle();
-                                // BattleFragment側は "BATTLE_AREA_ID" というキーで受け取るので合わせる
-                                bundle.putString("BATTLE_AREA_ID", areaId);
-
-                                // NavControllerを使って BattleFragment に遷移する
-                                // (nav_graph.xmlで定義したaction IDを指定)
-                                try {
-                                    NavHostFragment.findNavController(AreaInfoDialogFragment.this)
-                                            .navigate(R.id.action_mapFragment_to_battleFragment, bundle);
-                                } catch (Exception e) {
-                                    Log.e("AreaInfoDialog", "BattleFragmentへの遷移に失敗", e);
-                                    Toast.makeText(ctx, "バトル画面への遷移に失敗しました", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                //エネルギーが足りない場合
-                                Toast.makeText(ctx, "エネルギーが足りません！ (必要: " + battleCost + ", 現在: " + currentPlayerData.energy + ")", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                } else { //このエリアに敵がいないなら戻るボタンのみ
-                    builder.setMessage(message)
-                            .setPositiveButton("戻る", (dialog, id) -> dialog.dismiss());
-                }
-            } else {
-                //未解放の場合の処理
-                String message = "獲得称号: ？？？\n\n"
-                        + "ステータス: 未解放";
-
-                builder.setMessage(message)
-                        .setPositiveButton("戻る", (dialog, id) -> dialog.dismiss());
-            }
-            return builder.create();
-        }
-        builder.setTitle("エラー")
-                .setMessage("情報を表示できませんでした。")
-                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss());
-        return builder.create();
+        return inflater.inflate(R.layout.dialog_area_info, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // ダイアログの背景を透明にして、CardViewの角丸が活きるようにする
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // XMLから部品を見つける
+        TextView titleText = view.findViewById(R.id.dialog_area_title);
+        TextView messageText = view.findViewById(R.id.dialog_area_message);
+        Button positiveButton = view.findViewById(R.id.dialog_area_positive_button);
+        Button negativeButton = view.findViewById(R.id.dialog_area_negative_button);
+
+        // Bundleから情報を取り出す (以前onCreateDialogにあったもの)
+        Bundle args = getArguments();
+        if (args == null) {
+            dismiss(); // データがなければ閉じる
+            return;
+        }
+
+        String areaId = args.getString(ARG_AREA_ID);
+        String name = args.getString(ARG_NAME);
+        boolean isUnlocked = args.getBoolean(ARG_IS_UNLOCKED);
+        boolean isChallengeable = args.getBoolean(ARG_IS_ENEMY_HERE);
+        Title title = (Title) args.getSerializable("title");
+
+        // タイトルを設定
+        titleText.setText(name);
+
+        // 状態に応じてメッセージとボタンを設定
+        if (isUnlocked) {
+            // --- 解放済みの場合 ---
+            String titleName = (title != null) ? title.getName() : "（称号情報なし）";
+            String message = "獲得称号: " + titleName + "\n\n"
+                    + "ステータス: 解放済み";
+
+            if (isChallengeable) {
+                // (敵がいる場合)
+                message += "\n\n" + "！！敵が出現しました！！";
+                messageText.setText(message);
+
+                positiveButton.setText("敵に挑戦する(80消費)");
+                positiveButton.setOnClickListener(v -> {
+                    handleBattleClick(areaId); // バトル処理を別メソッドに
+                });
+
+                negativeButton.setText("戻る");
+                negativeButton.setOnClickListener(v -> dismiss());
+
+            } else {
+                // (敵がいない場合)
+                messageText.setText(message);
+                positiveButton.setText("OK");
+                positiveButton.setOnClickListener(v -> dismiss());
+                negativeButton.setVisibility(View.GONE); // 戻るボタンは1つで良い
+            }
+
+        } else {
+            // --- 未解放の場合 ---
+            String message = "獲得称号: ？？？\n\n"
+                    + "ステータス: 未解放";
+            messageText.setText(message);
+
+            positiveButton.setText("OK");
+            positiveButton.setOnClickListener(v -> dismiss());
+            negativeButton.setVisibility(View.GONE); // 戻るボタンは1つで良い
+        }
+    }
+    private void handleBattleClick(String areaId) {
+        Context ctx = getActivity();
+        if (ctx == null) return;
+
+        PlayerData currentPlayerData = GameDataManager.getInstance().loadPlayerData(ctx);
+        int battleCost = 80;
+
+        if (currentPlayerData.energy >= battleCost) {
+            // エネルギー消費
+            currentPlayerData.energy -= battleCost;
+            GameDataManager.getInstance().savePlayerData(ctx, currentPlayerData);
+
+            // BattleFragmentに渡すためのデータ（Bundle）を作成
+            Bundle bundle = new Bundle();
+            bundle.putString("BATTLE_AREA_ID", areaId);
+
+            // NavControllerを使って BattleFragment に遷移する
+            try {
+                NavHostFragment.findNavController(AreaInfoDialogFragment.this)
+                        .navigate(R.id.action_mapFragment_to_battleFragment, bundle);
+            } catch (Exception e) {
+                Log.e("AreaInfoDialog", "BattleFragmentへの遷移に失敗", e);
+                Toast.makeText(ctx, "バトル画面への遷移に失敗しました", Toast.LENGTH_SHORT).show();
+            }
+
+            dismiss(); // 遷移と同時にダイアログを閉じる
+
+        } else {
+            // エネルギーが足りない場合
+            Toast.makeText(ctx, "エネルギーが足りません！ (必要: " + battleCost + ", 現在: " + currentPlayerData.energy + ")", Toast.LENGTH_LONG).show();
+        }
+    }
+
 }

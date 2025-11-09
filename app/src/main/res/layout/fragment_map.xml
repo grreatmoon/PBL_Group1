@@ -27,6 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:clickable="false"
             />
 
         <com.example.pbl_gruop1.AlphaThresholdImageButton
@@ -113,86 +114,292 @@
             android:padding="0dp"
             android:contentDescription="弁天山エリア"/>
 
+        <ImageView
+            android:id="@+id/ufo_myosenji"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ufo_image_1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            app:layout_constraintHorizontal_bias="0.145"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintVertical_bias="0.634"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ufo_genkipark"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ufo_image_1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            app:layout_constraintHorizontal_bias="0.398"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintVertical_bias="0.588"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ufo_koshi_city_hall"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ufo_image_1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            app:layout_constraintHorizontal_bias="0.76"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintVertical_bias="0.476"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ufo_luther_church"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ufo_image_1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            app:layout_constraintHorizontal_bias="0.378"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintVertical_bias="0.417"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ufo_country_park"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ufo_image_1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            app:layout_constraintHorizontal_bias="0.227"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintVertical_bias="0.521"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ufo_benten_mountain"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ufo_image_1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            app:layout_constraintHorizontal_bias="0.079"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintVertical_bias="0.4"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/level_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Lv."
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:elevation="2dp"
+        android:fontFamily="@font/maruminya"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="Lv. 1"
+        android:textColor="#FFFFFF"
         android:textSize="45sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.114"
+        app:layout_constraintHorizontal_bias="0.056"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/rounded_text_bg"
-        android:textColor="#FFFFFF"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/kaihouritsu_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
         android:text="解放率"
         android:textSize="25sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.791"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/rounded_text_bg"
         android:textColor="#FFFFFF"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"/>
+        android:paddingRight="8dp"
+        android:fontFamily="@font/maruminya"
+
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gauge_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/kaihouritsu_text"
+        app:layout_constraintStart_toStartOf="@+id/kaihouritsu_text"
+        app:layout_constraintEnd_toEndOf="@+id/kaihouritsu_text">
+
+        <ProgressBar
+            android:id="@+id/kaihouritsu_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="20dp"
+            android:layout_height="100dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progressDrawable="@drawable/vertical_progress_bar"
+            tools:progress="30"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/mark_line_25"
+            android:layout_width="30dp"  android:layout_height="1dp" android:background="#FFFFFF" app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintStart_toStartOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintEnd_toEndOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintVertical_bias="0.75" />
+
+        <View
+        android:id="@+id/mark_line_50"
+        android:layout_width="30dp"
+        android:layout_height="1dp"
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintStart_toStartOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintEnd_toEndOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintVertical_bias="0.5" />
+
+        <View
+        android:id="@+id/mark_line_75"
+        android:layout_width="30dp"
+        android:layout_height="1dp"
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintStart_toStartOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintEnd_toEndOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintVertical_bias="0.25" />
+
+        <TextView
+        android:id="@+id/mark_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/kaihouritsu_progress_bar"
+        android:layout_marginStart="12dp"
+        app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+        android:id="@+id/mark_25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="25%"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/kaihouritsu_progress_bar"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+        app:layout_constraintVertical_bias="0.75" />
+
+        <TextView
+            android:id="@+id/mark_50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50%"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            app:layout_constraintStart_toEndOf="@+id/kaihouritsu_progress_bar"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <TextView
+            android:id="@+id/mark_75"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="75%"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            app:layout_constraintStart_toEndOf="@+id/kaihouritsu_progress_bar"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintVertical_bias="0.25" />
+
+        <TextView
+            android:id="@+id/mark_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100%"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            app:layout_constraintStart_toEndOf="@+id/kaihouritsu_progress_bar"
+            android:layout_marginStart="6dp"
+            app:layout_constraintTop_toTopOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintBottom_toBottomOf="@+id/kaihouritsu_progress_bar"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <TextView
         android:id="@+id/energy_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="エネルギー: 0 / 100"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/kaihouritsu_text"
-
+        android:fontFamily="@font/maruminya"
         android:background="@drawable/rounded_text_bg"
         android:textColor="#FFFFFF"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"/>
+        android:paddingRight="8dp"
+        tools:text="0 / 100" app:layout_constraintTop_toTopOf="@+id/energy_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/energy_progress_bar"
+        app:layout_constraintStart_toStartOf="@+id/energy_progress_bar"
+        app:layout_constraintEnd_toEndOf="@+id/energy_progress_bar"
+        android:elevation="2dp" />
 
     <ProgressBar
         android:id="@+id/energy_progress_bar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:indeterminate="false"
+        android:progressDrawable="@drawable/progress_circle"
+        android:background="@android:color/transparent"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
         android:max="100"
-        android:progress="50"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/energy_text" />
+        tools:progress="50"
+        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/level_text"
+        app:layout_constraintStart_toStartOf="@+id/level_text" />
 
     <TextView
         android:id="@+id/status_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="状態: 停止中"
+        android:layout_height="0dp"
+        android:layout_marginTop="0dp"
+        tools:text="停止中"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/energy_progress_bar"
-
+        android:fontFamily="@font/maruminya"
         android:background="@drawable/rounded_text_bg"
         android:textColor="#FFFFFF"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"/>
-
+        android:paddingRight="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/energy_progress_bar"
+        app:layout_constraintStart_toStartOf="@+id/energy_progress_bar"
+        app:layout_constraintEnd_toEndOf="@+id/energy_progress_bar"
+        />
 
     <!-- 下ボタン -->
 
@@ -202,11 +409,30 @@
 
     <!-- 右ボタン -->
 
-    <!-- +ボタン -->
+    <ImageButton
+        android:id="@+id/zoom_in_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/plus_button"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:contentDescription="拡大"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/zoom_out_button" />
 
-    <!-- タッチ操作切り替えボタン -->
-
-    <!-- -ボタン -->
+    <ImageButton
+        android:id="@+id/zoom_out_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/minus_button"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:contentDescription="縮小"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_toggle_mode" />
 
     <!-- ▼▼▼ モード切替用のボタンを追加 ▼▼▼ -->
     <Button

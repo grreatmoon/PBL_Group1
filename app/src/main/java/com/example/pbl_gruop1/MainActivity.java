@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "デバッグ用のエネルギー設定に失敗", e);
         }//デバッグ用なので後で消す
-        checkDailyUfoSpawn();
+
         Log.d("INIT","All requests got cleared.proceeding to next step");
         Toast.makeText(this,"All requests got cleared.proceeding to next step",Toast.LENGTH_SHORT).show();
         Log.d(TAG, "これからActivityTrackingServiceを開始します...");
@@ -208,52 +208,7 @@ public class MainActivity extends AppCompatActivity {
         startTracking();
     }
 
-    private void checkDailyUfoSpawn() {
-        //セーブデータ(SharedPreferences)を使って、最後にチェックした日を記録
-        android.content.SharedPreferences prefs = getSharedPreferences("KoshiExplorePrefs", MODE_PRIVATE);
-        String lastCheckDate = prefs.getString("LastUfoCheckDate","");
 
-        //現在の日付を取得(YYYY-MM-DD)
-        String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(new java.util.Date());
-
-        if (!lastCheckDate.equals(currentDate)) {
-            Log.d(TAG,"日付が変わりました。UFOの処理を開始します");
-
-            GameDataManager dataManager = GameDataManager.getInstance();
-            PlayerData playerData = dataManager.loadPlayerData(this);
-
-            //前日のUFOが残っていたらエリアを未開放に戻す
-            if (playerData.ufoAreaIds != null && !playerData.ufoAreaIds.isEmpty()){
-                Log.d(TAG, "前日に倒されなかったUFOがいます。エリアを未開放に戻します");
-                for (String ufoAreaId : playerData.ufoAreaIds) {
-                    playerData.unlockedAreaIds.remove(ufoAreaId); // 解放済みリストから削除
-                }
-            }
-
-            //新しいUFOを出現させる
-            playerData.ufoAreaIds.clear();
-            if (playerData.unlockedAreaIds != null && !playerData.unlockedAreaIds.isEmpty()) {
-                for (String unlockedId : playerData.unlockedAreaIds) {
-                    //とりあえず30%の確率でUFOが出現
-                    if (Math.random() < 0.3) {
-                        playerData.ufoAreaIds.add(unlockedId);
-                        Log.d(TAG, unlockedId + " にUFOが出現しました！");
-                    }
-                }
-            }
-
-            //処理終了後、データを保存して日付を記録
-            dataManager.savePlayerData(this, playerData);
-            prefs.edit().putString("LastUfoCheckDate", currentDate).commit();
-
-            // UI更新のためのお知らせを送信
-            Intent intent = new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
-            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        } else {
-            Log.d(TAG, "本日のUFOチェックは既に完了しています。");
-        }
-
-        }
 
 
 

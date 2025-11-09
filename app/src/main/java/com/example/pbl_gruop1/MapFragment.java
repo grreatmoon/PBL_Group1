@@ -29,11 +29,12 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
 
     //マップ操作にタッチイベントが全部吸われてるからマップ操作とボタン操作を切り替えられるように変更
     private boolean isMapInteractionEnabled = true; //true⇒マップ操作モード, false⇒エリア操作モード
-
+    private static final float PAN_SENSITIVITY = 1.5f; // ドラッグ感度
     private FragmentMapBinding binding;
 
     private View.OnTouchListener mapTouchListener;
-    private ScaleGestureDetector scaleDetector;
+    private android.animation.AnimatorSet ufoAnimatorSet;
+
     // --- タッチ操作関連の変数 ---
     private GestureDetector gestureDetector; // ダブルタップ検出用
     private boolean isZooming = false; // ダブルタップ後のズーム操作中かどうかのフラグ
@@ -56,7 +57,6 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(inflater, container, false);
 
-        scaleDetector = new ScaleGestureDetector(requireContext(), new ScaleListener());
         // GestureDetectorを初期化
         gestureDetector = new GestureDetector(requireContext(), new GestureListener());
 
@@ -129,21 +129,33 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
             // フラグを反転させる
             isMapInteractionEnabled = !isMapInteractionEnabled;
 
-            // ボタンのテキストを更新して、現在のモードをユーザーに知らせる
             if (isMapInteractionEnabled) {
+                // 【マップ操作モード】
                 binding.buttonToggleMode.setText("マップ操作モード");
-                // マップ操作モードになったら、リスナーを有効化する
-                //binding.mapContainer.setOnTouchListener(mapTouchListener);
+                // エリアボタンのクリックを無効化し、ドラッグの邪魔をさせない
+                setMaskButtonClickable(false);
             } else {
+                // 【エリア選択モード】
                 binding.buttonToggleMode.setText("エリア選択モード");
+                // エリアボタンのクリックを有効化
+                setMaskButtonClickable(true);
             }
-                // ★ onTouchメソッドの有効/無効はonTouch内で判定されるため、
-                // ここではリスナーが設定されている状態にするだけで良い。
-                binding.mapContainer.setOnTouchListener(this);
         });
 
         //エリアボタンのクリックリスナーを設定
         setupAreaButtonClickListeners();
+        //タッチリスナーを最初から設定
+        binding.mapContainer.setOnTouchListener(this);
+        // 起動時はマップ操作モード (isMapInteractionEnabled = true) なので、
+        // エリアボタンを最初から「クリック不可」に設定しておく
+        setMaskButtonClickable(false);
+        binding.zoomInButton.setOnClickListener(v -> {
+            zoomMap(1.25f); // 1.25倍
+        });
+
+        binding.zoomOutButton.setOnClickListener(v -> {
+            zoomMap(0.8f); // 0.8倍 (1 / 1.25)
+        });
     }
 
     @Override
@@ -165,11 +177,17 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     // --- タッチイベントを処理するメソッド ---
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        // まずジェスチャー検出器にイベントを渡す
-        // この２行はモードに関わらず常に実行しても良い
-        boolean scaleHandled = scaleDetector.onTouchEvent(event);
-        boolean gestureHandled = gestureDetector.onTouchEvent(event);
-        return scaleHandled || gestureHandled;
+        return gestureDetector.onTouchEvent(event);
+    }
+
+    private void setMaskButtonClickable(boolean clickable) {
+        if (binding == null) return;
+        binding.maskMyosenji.setClickable(clickable);
+        binding.maskGenkipark.setClickable(clickable);
+        binding.maskKoshiCityHall.setClickable(clickable);
+        binding.maskLutherChurch.setClickable(clickable);
+        binding.maskCountryPark.setClickable(clickable);
+        binding.maskBentenMountain.setClickable(clickable);
     }
 
     // --- ダブルタップとスクロール(ドラッグ移動)を検出するためのインナークラス ---
@@ -182,59 +200,23 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
                 return false;
             }
 
-            // マップを移動させる
-            posX -= distanceX;
-            posY -= distanceY;
+            // マップを移動させる.感度を少し高めてる
+            posX -= distanceX * PAN_SENSITIVITY;
+            posY -= distanceY * PAN_SENSITIVITY;
             clampTranslations();
             applyTranslation();
             return true; // イベントを処理したのでtrue
         }
 
-        @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
-            // ★ マップ操作モードでなければ、何もせずfalseを返す
-            if (!isMapInteractionEnabled) {
-                return false;
-            }
 
-            // ダブルタップのUPイベントを検知した時だけズーム処理を行う
-            if (e.getAction() == MotionEvent.ACTION_UP) {
-                if (scaleFactor > minScaleFactor * 1.5) { // ある程度拡大されていたら
-                    scaleFactor = minScaleFactor; // 最小サイズに戻す
-                } else {
-                    scaleFactor = scaleFactor * 2.0f; // 2倍に拡大
-                }
-                binding.mapContainer.setPivotX(e.getX());
-                binding.mapContainer.setPivotY(e.getY());
-                updateScale();
-                clampTranslations();
-                applyTranslation();
-            }
-            return true; // イベントを処理したのでtrue
-        }
         @Override
         public boolean onDown(MotionEvent e) {
-            // これをtrueにしないと他のジェスチャーが認識されないため必須
-            return true;
+            // マップ操作モードの時だけtrueを返す
+            //マップ操作モードの時はtrue,エリア選択モードの時はfalseを返す
+            return isMapInteractionEnabled;
         }
     }
 
-    // --- ピンチ操作でズームする ScaleListener ---
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            // ★ マップ操作モードでなければ、何もせずfalseを返す
-            if (!isMapInteractionEnabled) {
-                return false;
-            }
-
-            scaleFactor *= detector.getScaleFactor();
-            binding.mapContainer.setPivotX(detector.getFocusX());
-            binding.mapContainer.setPivotY(detector.getFocusY());
-            updateScale();
-            return true; // イベントを処理したのでtrue
-        }
-    }
 
     //onTouchメソッド⇒GestureListener, ScaleListenerへイベントを知らせる受付係を担当
     //GestureListener⇒onScroll, onDoubleTapEvent, onDownの指一本での操作を担当
@@ -350,11 +332,11 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         //プレイヤーデータをロード
         PlayerData playerData = GameDataManager.getInstance().loadPlayerData(getContext());
 
-        //EnemyManagerに日付更新とそれに伴うペナルティ, 再抽選処理を実行させる
-        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
-
-        //上の処理でエリアが没収されている可能性を考慮してプレイヤーデータを再読み込みする
-        playerData = GameDataManager.getInstance().loadPlayerData(getContext());
+//        //EnemyManagerに日付更新とそれに伴うペナルティ, 再抽選処理を実行させる
+//        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
+//
+//        //上の処理でエリアが没収されている可能性を考慮してプレイヤーデータを再読み込みする
+//        playerData = GameDataManager.getInstance().loadPlayerData(getContext());
 
         //エリアIDがリストに含まれているかを .contains() でチェック
         boolean isUnlocked = playerData.unlockedAreaIds.contains(areaId);
@@ -382,6 +364,47 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         binding.mapContainer.setScaleX(scaleFactor);
         binding.mapContainer.setScaleY(scaleFactor);
     }
+    private void zoomMap(float multiplier) {
+        if (binding == null) return;
+
+        // 画面中央をズームの中心にする
+        binding.mapContainer.setPivotX(binding.mapContainer.getWidth() / 2f);
+        binding.mapContainer.setPivotY(binding.mapContainer.getHeight() / 2f);
+
+        // スケールを更新
+        scaleFactor *= multiplier;
+
+        // 共通メソッド呼び出し
+        updateScale();
+        clampTranslations();
+        applyTranslation();
+    }
+    private void startFloatingAnimation(View ufoView) {
+        // 既に別のアニメーションが動いていたら止める
+        if (ufoAnimatorSet != null && ufoAnimatorSet.isRunning()) {
+            ufoAnimatorSet.cancel();
+        }
+
+        //上下（Y軸）の動き (1.5秒で10px下に)
+        android.animation.ObjectAnimator floatY = android.animation.ObjectAnimator.ofFloat(ufoView, "translationY", 0f, 50f);
+        floatY.setDuration(1500);
+        floatY.setRepeatCount(android.animation.ObjectAnimator.INFINITE);
+        floatY.setRepeatMode(android.animation.ObjectAnimator.REVERSE);
+        floatY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        //左右（X軸）の動き (2秒で左右に5pxずつ)
+        android.animation.ObjectAnimator floatX = android.animation.ObjectAnimator.ofFloat(ufoView, "translationX", -25f, 25f);
+        floatX.setDuration(2000);
+        floatX.setRepeatCount(android.animation.ObjectAnimator.INFINITE);
+        floatX.setRepeatMode(android.animation.ObjectAnimator.REVERSE);
+        floatX.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        //上下と左右の動きを同時に再生する
+        ufoAnimatorSet = new android.animation.AnimatorSet();
+        ufoAnimatorSet.playTogether(floatY, floatX);
+        ufoAnimatorSet.start();
+    }
+
 
     // --- 位置更新処理を共通化 ---
     private void applyTranslation() {
@@ -448,31 +471,77 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
 
         GameDataManager dataManager = GameDataManager.getInstance();
         PlayerData playerData = dataManager.loadPlayerData(getContext());
-        List<String> unlockedIds = playerData.unlockedAreaIds;
 
+        //敵の出現チェックをダイアログからこちらに移動
+        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
+        //エリア没収が反映された可能性があるので、playerDataを再読み込み
+        playerData = dataManager.loadPlayerData(getContext());
+
+        List<String> unlockedIds = playerData.unlockedAreaIds;
         AreaManager areaManager = AreaManager.getInstance();
+
+        //解放率の計算・表示
         int unlockedCount = playerData.unlockedAreaIds.size();
         int totalCount = areaManager.getAreaList().size();
         double liberationRate = 0.0;
         if (totalCount > 0) {
             liberationRate = (double) unlockedCount / totalCount * 100.0;
         }
+        binding.kaihouritsuText.setText("解放率");
+        binding.kaihouritsuProgressBar.setProgress((int) liberationRate);
 
-        // UIにデータを表示する
+        //ステータスの表示
         binding.levelText.setText("Lv. " + playerData.level);
-        binding.kaihouritsuText.setText("解放率： " + String.format("%.1f", liberationRate) + "%");
-        binding.energyText.setText("エネルギー: " + playerData.energy + " / " + playerData.maxEnergy);
+        binding.energyText.setText(playerData.energy + " / " + playerData.maxEnergy);
         binding.energyProgressBar.setMax(playerData.maxEnergy);
         binding.energyProgressBar.setProgress(playerData.energy);
-        binding.statusText.setText("状態: " + playerData.currentStatus);
+        binding.statusText.setText(playerData.currentStatus);
 
-        // マスクの表示・非表示を効率的に更新
+        //マスクの表示・非表示
         updateMaskVisibility(binding.maskMyosenji, unlockedIds.contains("Myosenji"));
         updateMaskVisibility(binding.maskGenkipark, unlockedIds.contains("GenkiPark"));
         updateMaskVisibility(binding.maskKoshiCityHall, unlockedIds.contains("KoshiCityHall"));
         updateMaskVisibility(binding.maskLutherChurch, unlockedIds.contains("LutherChurch"));
         updateMaskVisibility(binding.maskCountryPark, unlockedIds.contains("CountryPark"));
         updateMaskVisibility(binding.maskBentenMountain, unlockedIds.contains("BentenMountain"));
+
+
+        //既存のアニメーションを止める
+        if (ufoAnimatorSet != null) {
+            ufoAnimatorSet.cancel();
+            ufoAnimatorSet = null;
+        }
+
+        //各エリアにUFOがいるかチェック
+        boolean ufoMyosenji = EnemyManager.getInstance().isEnemyChallengeable("Myosenji");
+        boolean ufoGenkipark = EnemyManager.getInstance().isEnemyChallengeable("GenkiPark");
+        boolean ufoKoshiCityHall = EnemyManager.getInstance().isEnemyChallengeable("KoshiCityHall");
+        boolean ufoLutherChurch = EnemyManager.getInstance().isEnemyChallengeable("LutherChurch");
+        boolean ufoCountryPark = EnemyManager.getInstance().isEnemyChallengeable("CountryPark");
+        boolean ufoBentenMountain = EnemyManager.getInstance().isEnemyChallengeable("BentenMountain");
+
+        //表示・非表示を切り替え
+        binding.ufoMyosenji.setVisibility(ufoMyosenji ? View.VISIBLE : View.GONE);
+        binding.ufoGenkipark.setVisibility(ufoGenkipark ? View.VISIBLE : View.GONE);
+        binding.ufoKoshiCityHall.setVisibility(ufoKoshiCityHall ? View.VISIBLE : View.GONE);
+        binding.ufoLutherChurch.setVisibility(ufoLutherChurch ? View.VISIBLE : View.GONE);
+        binding.ufoCountryPark.setVisibility(ufoCountryPark ? View.VISIBLE : View.GONE);
+        binding.ufoBentenMountain.setVisibility(ufoBentenMountain ? View.VISIBLE : View.GONE);
+
+        // 表示したUFOのアニメーションを開始 (EnemyManagerはUFOが1体だけなので、if elseでOK)
+        if (ufoMyosenji) {
+            startFloatingAnimation(binding.ufoMyosenji);
+        } else if (ufoGenkipark) {
+            startFloatingAnimation(binding.ufoGenkipark);
+        } else if (ufoKoshiCityHall) {
+            startFloatingAnimation(binding.ufoKoshiCityHall);
+        } else if (ufoLutherChurch) {
+            startFloatingAnimation(binding.ufoLutherChurch);
+        } else if (ufoCountryPark) {
+            startFloatingAnimation(binding.ufoCountryPark);
+        } else if (ufoBentenMountain) {
+            startFloatingAnimation(binding.ufoBentenMountain);
+        }
     }
 
     private void updateMaskVisibility(View maskView, boolean isUnlocked) {
