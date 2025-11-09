@@ -160,6 +160,8 @@ public class BattleFragment extends Fragment {
             Log.d(TAG, "勝利！ " + battleAreaId + " のUFOを倒した。");
             //敵を倒したことを通知
             EnemyManager.getInstance().setTodayEnemyAsDefeated(getContext());
+            // 防衛日数カウンターを更新する
+            new BattleResult().Defencebattle(getContext(), playerData,battleAreaId);
             // PlayerDataのUFOリストから、倒したエリアIDを削除
             playerData.ufoAreaIds.remove(battleAreaId);
             dataManager.savePlayerData(getContext(), playerData); // 保存

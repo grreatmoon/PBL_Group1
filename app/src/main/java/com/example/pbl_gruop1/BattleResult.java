@@ -12,58 +12,45 @@ public class BattleResult{
      * 連続撃破日数の判定と更新、および関連する称号のアンロックを行う。
      * @param context プレイヤーデータを保存するために使用するコンテクスト
      */
-    public void Defencebattle(Context context, String areaId){
-        //GameDataManagerからプレイヤーデータの取得とロードを行う
-        GameDataManager dataManager = GameDataManager.getInstance();
-        PlayerData playerData = dataManager.loadPlayerData(context);
+    public void Defencebattle(Context context, PlayerData playerData, String areaId){
+        // GameDataManagerのロード/セーブを削除
 
         //プレイヤーデータがなければ処理を中断
-        if (areaId == null || areaId.isEmpty() ||playerData == null){
-            //一応エラーとしてログを出力する
-            Log.e("BattleResult", "無効なareaId, またはPlayerDataの読み込みに失敗しました。");
+        if (areaId == null || areaId.isEmpty() || playerData == null){
+            Log.e("BattleResult", "無効なareaId, またはPlayerDataがnullです。");
             return;
         }
 
         long now = System.currentTimeMillis(); //現在の日付(ミリ秒)
-
-        //マップから特定のエリアの最後に防衛した日付を取得
         long lastDefence = playerData.lastDefenceDaysMap.getOrDefault(areaId, 0L);
-        //マップから特定のエリアの連続防衛日数を取得
         int consecutiveDays = playerData.consecutiveDefenceDaysMap.getOrDefault(areaId, 0);
 
         if (lastDefence == 0){ //防衛戦初勝利
-            consecutiveDays = 1; //consecutiveDays：連続防衛日数
-        }else{ //既に一度防衛成功している場合
-            //最後に倒した日と今日の日付を比較
+            consecutiveDays = 1;
+        }else{
             if (isYesterday(now, lastDefence)){
                 //最後に倒したのが昨日なら連続日数をプラス
                 consecutiveDays++;
             } else if (!isToday(now, lastDefence)){
-                //最後に倒したのが今日ではなく、昨日でもない場合(連続記録が途切れた場合)
-                consecutiveDays = 0;
+                //連続記録が途切れた場合、0ではなく1にリセット
+                consecutiveDays = 1;
             }
             //最後に倒したのが今日なら連続記録の変更は無し
         }
 
-        // "このエリア" の連続日数と最終日時をマップに保存
         playerData.consecutiveDefenceDaysMap.put(areaId, consecutiveDays);
         playerData.lastDefenceDaysMap.put(areaId, now);
 
         //2日以上の連続防衛で称号を取得
         if (consecutiveDays >= 2){
-            //例えばareaIdが"Myosenji", consecutiveDaysが3の場合、
-            // "title_Myosenji_defence_3" というIDが生成される
             String newTitleId = "title_" + areaId + "_defence_" + consecutiveDays;
-
-            //その日数の称号をまだ持っていないかチェック
             if (!playerData.unlockedTitleIds.contains(newTitleId)) {
-                // 新しい称号をリストに追加
                 playerData.unlockedTitleIds.add(newTitleId);
             }
         }
 
-        //更新した分のプレイヤーデータをファイルに保存する
-        dataManager.savePlayerData(context, playerData);
+        // 内部でのセーブ処理を削除
+        // dataManager.savePlayerData(context, playerData);
     }
 
     /**

@@ -4,9 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00d76b"
     tools:context=".MapFragment">
-
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="背景"
+        android:scaleType="centerCrop"
+        android:src="@drawable/map_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/map_container"
         android:layout_width="0dp"
@@ -104,15 +112,17 @@
             android:id="@+id/mask_benten_mountain"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/mask_benten_mountain"
-            android:scaleType="fitCenter"
-            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
-            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
-            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
-            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
             android:background="@android:color/transparent"
+            android:contentDescription="弁天山エリア"
             android:padding="0dp"
-            android:contentDescription="弁天山エリア"/>
+            android:scaleType="fitCenter"
+            android:src="@drawable/mask_benten_mountain"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
+            app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/image_view_map_base"
+            app:layout_constraintTop_toTopOf="@id/image_view_map_base"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/ufo_myosenji"
@@ -122,10 +132,10 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/image_view_map_base"
             app:layout_constraintEnd_toEndOf="@id/image_view_map_base"
-            app:layout_constraintHorizontal_bias="0.145"
+            app:layout_constraintHorizontal_bias="0.133"
             app:layout_constraintStart_toStartOf="@id/image_view_map_base"
             app:layout_constraintTop_toTopOf="@id/image_view_map_base"
-            app:layout_constraintVertical_bias="0.634"
+            app:layout_constraintVertical_bias="0.603"
             tools:visibility="visible" />
 
         <ImageView

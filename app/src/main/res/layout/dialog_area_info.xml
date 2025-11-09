@@ -40,6 +40,18 @@
                 android:textSize="16sp"
                 android:textColor="#666666"
                 tools:text="ここにステータスや称号情報が入る" />
+            <TextView
+                android:id="@+id/dialog_area_enemy_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="！！敵が出現しました！！"
+                android:textColor="#FF0000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
