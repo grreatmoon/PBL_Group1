@@ -162,6 +162,18 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
      * @param newPlayerData 新しいプレイヤーデータ
      */
     public void updateData(List<Title> newTitleList, PlayerData newPlayerData) {
+
+        //称号の並び替え表示
+        java.util.Collections.sort(newTitleList, (t1, t2) -> {
+            //カテゴリで並び替え
+            int categoryCompare = t1.getCategory().compareTo(t2.getCategory());
+            if (categoryCompare != 0) {
+                return categoryCompare;
+            }
+            //同じカテゴリ内なら、名前（ID）で並び替え
+            return t1.getId().compareTo(t2.getId());
+        });
+
         // 既存のリストをクリアして新しいデータを追加
         this.titleList.clear();
         this.titleList.addAll(newTitleList);

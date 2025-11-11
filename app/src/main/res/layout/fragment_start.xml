@@ -31,9 +31,9 @@
         android:fontFamily="@font/maruminya"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="Lv. 1"
+        android:text="討伐数: 0"
         android:textColor="#FFFFFF"
-        android:textSize="45sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.056"
         app:layout_constraintStart_toStartOf="parent"
@@ -289,5 +289,20 @@
         app:layout_constraintTop_toTopOf="@+id/to_syougou_button"
         app:layout_constraintVertical_bias="0.491"
         android:fontFamily="@font/jf_dot_font"/>
+
+    <ImageButton
+        android:id="@+id/debug_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="16dp"
+
+        android:src="@android:drawable/ic_menu_manage"
+
+        android:background="@drawable/rounded_text_bg"
+
+        android:contentDescription="デバッグ"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

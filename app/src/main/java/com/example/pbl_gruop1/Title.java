@@ -8,13 +8,15 @@ public class Title implements Serializable{
     private String description; //称号の獲得条件の説明
     private String imageName; //称号のアイコンの画像のリソースID
     private String requiredAreaId;  //この称号を開放するために必要なエリアのID
+    private String category;    //称号を整理用のカテゴリ
 
-    public Title(String id, String name, String description, String imageName, String requiredAreaId) {
+    public Title(String id, String name, String description, String imageName, String requiredAreaId,String category) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.imageName = imageName;
         this.requiredAreaId = requiredAreaId;
+        this.category = category;
     }
 
     public String getId() {
@@ -36,5 +38,6 @@ public class Title implements Serializable{
     public String getRequiredAreaId() {
         return requiredAreaId;
     }
+    public String getCategory() { return category; }
 
 }

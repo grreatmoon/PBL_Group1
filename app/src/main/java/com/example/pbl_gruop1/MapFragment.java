@@ -491,7 +491,7 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         binding.kaihouritsuProgressBar.setProgress((int) liberationRate);
 
         //ステータスの表示
-        binding.levelText.setText("Lv. " + playerData.level);
+        binding.levelText.setText("討伐数：" + playerData.ufoDefeatCount);
         binding.energyText.setText(playerData.energy + " / " + playerData.maxEnergy);
         binding.energyProgressBar.setMax(playerData.maxEnergy);
         binding.energyProgressBar.setProgress(playerData.energy);

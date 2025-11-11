@@ -104,10 +104,11 @@ public class AreaInfoDialogFragment extends DialogFragment {
             if (isChallengeable) {
                 // (敵がいる場合)
                 messageText.setText(message);
+                enemyAlertText.setText("※敵に挑戦するには\nエネルギーを80消費します");
                 enemyAlertText.setVisibility(View.VISIBLE);
                 //非表示→表示
 
-                positiveButton.setText("敵に挑戦する(80消費)");
+                positiveButton.setText("挑戦");
                 positiveButton.setOnClickListener(v -> {
                     handleBattleClick(areaId); // バトル処理を別メソッドに
                 });
