@@ -56,14 +56,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     //アプリ起動時の初期化
-    // onCrerate関数内でXMLレイアウトを読み込んでいる
+    //onCrerate関数内でXMLレイアウトを読み込んでいる
         super.onCreate(savedInstanceState);
 
         checkAndRequestPermissions();
         //gpsやinternet等の許可をチェック
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        //デザインしたXMLレイアウトファイルをメモリ上に読み込む
+        //デザインしたXMLレイアウトファイルを読み込む
         setContentView(binding.getRoot());
 
 
@@ -86,19 +86,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -117,39 +112,39 @@ public class MainActivity extends AppCompatActivity {
     //このメソッドはREQUIRED_PERMISSIONSに設定した権限が許可されているか確認し、許可されていなければユーザーに要求するメソッド
         List<String> permissionsToRequest = new ArrayList<>();
 
-        // 必須の権限（位置情報）をチェック
+        //必須の権限（位置情報）をチェック
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {   //この文で許可がなければ権限をリクエストしている
             permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
-        // OSがAndroid 12(API 31)以上なら、COARSEもセットで要求する必要がある
+        //OSがAndroid 12(API 31)以上なら、COARSEもセットで要求する必要がある
         if  (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION);
             }
         }
 
-        // OSがAndroid 10 (API 29) 以上なら、身体活動の権限もチェック
+        //OSがAndroid 10 (API 29) 以上なら、身体活動の権限もチェック
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.ACTIVITY_RECOGNITION);
             }
         }
 
-        // OSがAndroid 13 (API 33) 以上なら、通知の権限もチェック
+        //OSがAndroid 13 (API 33) 以上なら、通知の権限もチェック
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
 
-        // OSがAndroid9以上ならフォアグラウンドサービスの基本権限をチェック
+        //OSがAndroid9以上ならフォアグラウンドサービスの基本権限をチェック
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE);
             }
         }
-        // OSがAndroid 14 (API 34) 以上なら、フォアグラウンドサービスの「位置情報」権限をチェック
+        //OSがAndroid 14 (API 34) 以上なら、フォアグラウンドサービスの「位置情報」権限をチェック
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION);
@@ -245,10 +240,10 @@ public class MainActivity extends AppCompatActivity {
 // OSバージョンによって権限チェックの要否を判断する.このチェック入れないとエラー出る.
     boolean permissionGranted;
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-        // Android 10以上：権限があるかチェック
+        //Android 10以上→権限があるかチェック
         permissionGranted = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED);
     } else {
-        // Android 9以前：権限は不要なので、常に許可されていると見なす
+        //Android 9以前→権限は不要なので、常に許可されていると見なす
         permissionGranted = true;
     }
 

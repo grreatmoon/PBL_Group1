@@ -411,6 +411,7 @@
         app:layout_constraintEnd_toEndOf="@+id/energy_progress_bar"
         />
 
+<!--    追加するかも？-->
     <!-- 下ボタン -->
 
     <!-- 上ボタン -->
@@ -444,7 +445,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/button_toggle_mode" />
 
-    <!-- ▼▼▼ モード切替用のボタンを追加 ▼▼▼ -->
+    <!-- モード切替用のボタンを追加 -->
     <Button
         android:id="@+id/button_toggle_mode"
         android:layout_width="wrap_content"

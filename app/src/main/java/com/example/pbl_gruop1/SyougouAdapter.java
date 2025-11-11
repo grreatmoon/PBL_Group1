@@ -20,21 +20,15 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
     private final PlayerData playerData;
     private final Context context; //ダイアログ表示のためにContextを受け取る
 
-    /**
-     * アダプターのコンストラクタ
-     * @param context 表示元のContext
-     * @param titleList 表示したい称号のマスターデータリスト
-     * @param playerData プレイヤーの所持データ
-     */
     public SyougouAdapter(Context context, List<Title> titleList, PlayerData playerData) {
         this.context = context;
         this.titleList = titleList;
         this.playerData = playerData;
 
         //称号:合志マスターの取得条件を追記
-        // プレイヤーが現在持っている称号IDのリストを取得
+        //プレイヤーが現在持っている称号IDのリストを取得
         List<String> unlockedIds = this.playerData.unlockedTitleIds;
-        // 取得条件となる6つの称号IDのリストを作成
+        //取得条件となる6つの称号IDのリストを作成
         List<String> requiredTitles = new ArrayList<>();
         requiredTitles.add("title_myosenji");
         requiredTitles.add("title_genkipark");
@@ -43,24 +37,20 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         requiredTitles.add("title_countrypark");
         requiredTitles.add("title_bentenmountain");
 
-        // プレイヤーが全ての必須称号を持っているかチェック
+        //プレイヤーが全ての必須称号を持っているかチェック
         if (unlockedIds.containsAll(requiredTitles)) {
-            // 条件を満たしていれば、「合志マスター」のIDをプレイヤーデータに追加
+            //条件を満たしていれば、「合志マスター」のIDをプレイヤーデータに追加
             unlockedIds.add("title_koshimaster");
 
-            // (任意) プレイヤーに称号獲得を通知する
-            // Toast.makeText(context, "称号「合志マスター」を獲得しました！", Toast.LENGTH_LONG).show();
+            //(任意) プレイヤーに称号獲得を通知する
+            //Toast.makeText(context, "称号「合志マスター」を獲得しました！", Toast.LENGTH_LONG).show();
 
-            // (任意) 変更を即座に保存する（もしGameDataManagerがあるなら）
-            // GameDataManager.getInstance().savePlayerData(context, this.playerData);
+            //(任意) 変更を即座に保存する（もしGameDataManagerがあるなら）
+            //GameDataManager.getInstance().savePlayerData(context, this.playerData);
         }
     }
     //合志マスターの取得状況チェックここまで
 
-    /**
-     * ViewHolderが新しく作成されるときに呼び出されるメソッド。
-     * button_syougou_detail.xmlからレイアウトを読み込み、ViewHolderを生成する。
-     */
     @NonNull
     @Override
     public SyougouViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -68,11 +58,6 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         return new SyougouViewHolder(view);
     }
 
-    /**
-     * ViewHolderにデータが結びつけられるときに呼び出されるメソッド。
-     * @param holder データがセットされるViewHolder
-     * @param position リスト内のデータの位置(0スタート)
-     */
     @Override
     public void onBindViewHolder(@NonNull SyougouViewHolder holder, int position) {
         // 表示する称号データをリストから取得
@@ -85,7 +70,7 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         final int lockedImageResId = R.drawable.syougou_image_locked;   //未開放用画像ID
 
 
-        // プレイヤーが称号を持っているかどうかの判定
+        //プレイヤーが称号を持っているかどうかの判定
         if (playerData.unlockedTitleIds.contains(currentTitle.getId())) {
             //取得済みなら...
             holder.syougouButton.setText(currentTitle.getName()); //称号名をそれぞれ設定
@@ -119,14 +104,6 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         }
     }
 
-
-    /**
-     * 称号の詳細ダイアログを表示する為のメソッド
-     * SyougouFragmentからこのクラスに移動させた
-     * @param title 称号名
-     * @param message 称号の説明文
-     * @param imageResId 画像のリソースID
-     */
     private void showDetailDialog(String title, String message, int imageResId) {
         //contextがnullの場合は、処理を中断してクラッシュを防ぐ
         if (context == null) return;
@@ -156,11 +133,7 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         //getIdentifierは文字列からリソースIDを見つけるためのAndroid標準機能
         return resources.getIdentifier(imageName, "drawable",context.getPackageName());
     }
-    /**
-     * 新しいデータでリストを更新し、RecyclerViewに変更を通知するメソッド
-     * @param newTitleList 新しい称号リスト
-     * @param newPlayerData 新しいプレイヤーデータ
-     */
+
     public void updateData(List<Title> newTitleList, PlayerData newPlayerData) {
 
         //称号の並び替え表示
@@ -174,15 +147,15 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
             return t1.getId().compareTo(t2.getId());
         });
 
-        // 既存のリストをクリアして新しいデータを追加
+        //既存のリストをクリアして新しいデータを追加
         this.titleList.clear();
         this.titleList.addAll(newTitleList);
 
-        // プレイヤーデータを更新
-        // PlayerDataクラスにコピー用のメソッドがあるとより安全だが、今回は直接代入する
+        //プレイヤーデータを更新
+        //PlayerDataクラスにコピー用のメソッドがあるとより安全だが、今回は直接代入する
         this.playerData.unlockedTitleIds = newPlayerData.unlockedTitleIds;
 
-        // RecyclerViewにデータセットが変更されたことを通知する
+        //RecyclerViewにデータセットが変更されたことを通知する
         notifyDataSetChanged();
     }
 

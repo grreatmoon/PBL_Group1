@@ -14,7 +14,6 @@ public class TitleManager {
     private TitleManager() {    //称号の情報を定義
         staticTitlesMap = new HashMap<>();
 
-        // --- 事前に定義できる、数が決まっている称号だけを登録 ---
         staticTitlesMap.put("title_myosenji", new Title("title_myosenji", "妙泉寺の僧侶", "妙泉寺を訪れる", "syougou_image_myosenji", "Myosenji","AREA"));
         staticTitlesMap.put("title_genkipark", new Title("title_genkipark", "元気の森の冒険家", "元気の森公園を訪れる", "syougou_image_genkipark", "GenkiPark","AREA"));
         staticTitlesMap.put("title_koshicityhall", new Title("title_koshicityhall", "合志市の市民", "合志市役所を訪れる", "syougou_image_koshicityhall", "KoshiCityHall","AREA"));
@@ -60,9 +59,9 @@ public List<Title> getUnlockedTitles(List<String> unlockedIds) {
 }
 
 
-//称号IDを元に、Titleオブジェクトを返す「翻訳」メソッド
+//称号IDを元に、Titleオブジェクトを返すメソッド
 public Title getTitleById(String titleId) {
-    // 1. まず、静的な称号リストにIDがあるか探す
+    //まず、静的な称号リストにIDがあるか探す
     if (staticTitlesMap.containsKey(titleId)) {
         return staticTitlesMap.get(titleId);
     }
@@ -71,11 +70,10 @@ public Title getTitleById(String titleId) {
     if (titleId != null && titleId.startsWith("title_") && titleId.contains("_defence_")) {
         try {
             String[] parts = titleId.split("_");
-            // "title_Myosenji_defence_3" -> parts[0]="title", parts[1]="Myosenji", parts[2]="defence", parts[3]="3"
             String areaId = parts[1];
             int days = Integer.parseInt(parts[3]);
 
-            //ここで動的にTitleオブジェクトを生成
+            //ここでTitleオブジェクトを生成
             return createConsecutiveDefenceTitle(areaId, days);
 
         } catch (Exception e) {
@@ -87,11 +85,9 @@ public Title getTitleById(String titleId) {
     return null;
 }
 
-    //連続防衛称号の情報を動的に生成するヘルパーメソッド
 private Title createConsecutiveDefenceTitle(String areaId, int days) {
     String titleId = "title_" + areaId + "_defence_" + days;
 
-    // エリア名と画像名を決定 (もっと良い方法もありますが、まずはswitch文で)
     String titleName;
     String description;
     String imageName;
@@ -99,39 +95,39 @@ private Title createConsecutiveDefenceTitle(String areaId, int days) {
     switch (areaId) {
         case "myosenji":
             titleName = "妙泉寺の統治者";
-            description = "妙泉寺の" + days + "日連続防衛成功"; // ← ここで数字を埋め込む！
+            description = "妙泉寺の" + days + "日連続防衛成功";
             imageName = "syougou_image_myosenji";
             break;
         case "genkiPark":
             titleName = "元気の森公園の統治者";
-            description = "元気の森公園" + days + "日連続防衛"; // ← ここで数字を埋め込む！
+            description = "元気の森公園" + days + "日連続防衛";
             imageName = "syougou_image_genkipark";
             break;
         case "koshicityhall":
             titleName = "合志市役所の統治者";
-            description = "元気の森公園" + days + "日連続防衛"; // ← ここで数字を埋め込む！
+            description = "元気の森公園" + days + "日連続防衛";
             imageName = "syougou_image_koshicityhall";
             break;
         case "lutherchurch":
             titleName = "ルーテル合志教会の統治者";
-            description = "教会" + days + "日連続防衛"; // ← ここで数字を埋め込む！
+            description = "教会" + days + "日連続防衛";
             imageName = "syougou_image_lutherchurch";
             break;
         case "countrypark":
             titleName = "カントリーパークの統治者";
-            description = "カントリーパーク" + days + "日連続防衛"; // ← ここで数字を埋め込む！
+            description = "カントリーパーク" + days + "日連続防衛";
             imageName = "syougou_image_countrypark";
             break;
         case "bentenmountain":
             titleName = "弁天山の統治者";
-            description = "弁天山" + days + "日連続防衛"; // ← ここで数字を埋め込む！
+            description = "弁天山" + days + "日連続防衛";
             imageName = "syougou_image_bentenmountain";
             break;
         default:
-            // 未知のエリアIDだった場合
+            //未知のエリアIDだった場合
             titleName = areaId + "の統治者";
             description = areaId + "を" + days + "日連続防衛";
-            imageName = "default_image"; // デフォルト画像
+            imageName = "default_image"; //デフォルト画像
             break;
     }
     return new Title(titleId, titleName, description, imageName, null,"DEFENSE");
@@ -143,8 +139,9 @@ private Title createConsecutiveDefenceTitle(String areaId, int days) {
         }
 
         //staticTitlesMapが全ての静的称号を保持している
+        //各Titleが持つエリアIDと, 引数で受け取ったエリアIDが一致するか判定
         for (Title title : staticTitlesMap.values()) {
-            //各Titleが持つエリアIDと, 引数で受け取ったエリアIDが一致するか判定
+
             if (areaId.equals(title.getRequiredAreaId())) {
                 return title; //一致したらTitleオブジェクトを返す
             }

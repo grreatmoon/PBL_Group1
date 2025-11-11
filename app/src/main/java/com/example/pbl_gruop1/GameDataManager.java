@@ -34,12 +34,12 @@ public class GameDataManager {
         if (areaIdToConfiscate != null && playerData.unlockedAreaIds != null) {
             boolean removed = playerData.unlockedAreaIds.remove(areaIdToConfiscate);
             if (removed) {
-                // エリア没収時に防衛日数を0にリセット
+                //エリア没収時に防衛日数を0にリセット
                 if (playerData.consecutiveDefenceDaysMap != null) {
                     playerData.consecutiveDefenceDaysMap.put(areaIdToConfiscate, 0);
                     Log.d("GameDataManager", areaIdToConfiscate + " の防衛日数を0にリセットしました。");
                 }
-                // エリアが正常に削除された場合のみセーブデータを更新
+                //エリアが正常に削除された場合のみセーブデータを更新
                 savePlayerData(context, playerData);
             }
         }

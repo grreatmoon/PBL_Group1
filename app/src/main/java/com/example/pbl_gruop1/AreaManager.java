@@ -62,13 +62,13 @@ public class AreaManager {
         if (areaId == null || areaList == null) {
             return null;
         }
-        // areaListをループして、IDが一致する最初のAreaを探す
+        //areaListをループして、IDが一致する最初のAreaを探す
         for (Area area : areaList) {
             if (areaId.equals(area.getId())) {
                 return area;
             }
         }
-        // 最後まで見つからなかった場合はnullを返す
+        //最後まで見つからなかった場合はnullを返す
         return null;
     }
 

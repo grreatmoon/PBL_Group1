@@ -34,20 +34,20 @@ public class BattleFragment extends Fragment {
     private static final long GAME_TIME_MS = 10000; // 制限時間 (10秒)
     private static final int REQUIRED_TAPS = 30; // 勝利に必要なタップ数
 
-    // UI部品
+    //UI部品
     private TextView timerText;
     private TextView tapCountText;
     private Button attackButton;
     private ImageView ufoImage;
     private ProgressBar timeProgressBar;
 
-    // ゲームロジック用
+    //ゲームロジック用
     private CountDownTimer gameTimer;
     private int tapCount = 0;
     private boolean isGameFinished = false;
-    private String battleAreaId; // MapFragmentから渡された「戦うUFOのエリアID」
+    private String battleAreaId; //MapFragmentから渡された「UFOのエリアID」（戦う相手）
 
-    // アニメーション用
+    //アニメーション用
     private Handler animationHandler = new Handler(Looper.getMainLooper());
     private boolean isUfoImage1 = true;
 
@@ -65,7 +65,7 @@ public class BattleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // UI部品をレイアウト(XML)から見つける
+        //UI部品をレイアウト(XML)から見つける
         timerText = view.findViewById(R.id.timer_text);
         tapCountText = view.findViewById(R.id.tap_count_text);
         attackButton = view.findViewById(R.id.attack_button);
@@ -75,7 +75,7 @@ public class BattleFragment extends Fragment {
         timeProgressBar.setProgress((int) GAME_TIME_MS);
         timeProgressBar.setMax((int) GAME_TIME_MS);
         timeProgressBar.setProgress((int) GAME_TIME_MS);
-        // MapFragmentから渡された「BATTLE_AREA_ID」を受け取る
+        //MapFragmentから渡された「BATTLE_AREA_ID」を受け取る
         if (getArguments() != null) {
             battleAreaId = getArguments().getString("BATTLE_AREA_ID");
         }
@@ -85,7 +85,7 @@ public class BattleFragment extends Fragment {
             return;
         }
 
-        // 連打ボタンの処理
+        //連打ボタンの処理
         attackButton.setOnClickListener(v -> {
             if (!isGameFinished) {
                 tapCount++;
@@ -103,21 +103,22 @@ public class BattleFragment extends Fragment {
     }
 
     //UFOを上下左右に動かすアニメーション
+    //八の字
     private void startFloatingAnimation() {
-        if (ufoImage == null) return; // UFO画像がなければ何もしない
+        if (ufoImage == null) return; //UFO画像がなければ何もしない
 
         //上下（Y軸）の動き
         //1.5秒かけて、現在の位置(0f)から 30f 下の位置まで移動する
         android.animation.ObjectAnimator floatY = android.animation.ObjectAnimator.ofFloat(ufoImage, "translationY", 0f, 120f);
-        floatY.setDuration(1500); // 1.5秒
-        floatY.setRepeatCount(android.animation.ObjectAnimator.INFINITE); // 無限に繰り返す
+        floatY.setDuration(1500); //1.5秒
+        floatY.setRepeatCount(android.animation.ObjectAnimator.INFINITE); //無限に繰り返す
         floatY.setRepeatMode(android.animation.ObjectAnimator.REVERSE); // 往復（下まで行ったら上に戻る）
-        floatY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator()); // ゆっくり始まってゆっくり終わる
+        floatY.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator()); //ゆっくり始まってゆっくり終わる
 
         //左右（X軸）の動き
         //2秒かけて、左(-20f)から右(20f)まで移動する
         android.animation.ObjectAnimator floatX = android.animation.ObjectAnimator.ofFloat(ufoImage, "translationX", -120f, 120f);
-        floatX.setDuration(2000); // 2秒（Y軸とタイミングをずらす）
+        floatX.setDuration(2000); //2秒（Y軸とタイミングをずらす）
         floatX.setRepeatCount(android.animation.ObjectAnimator.INFINITE);
         floatX.setRepeatMode(android.animation.ObjectAnimator.REVERSE);
         floatX.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
@@ -128,37 +129,37 @@ public class BattleFragment extends Fragment {
         ufoFloatAnimatorSet.start();
     }
 
-    // 10秒のカウントダウンタイマー
+    //10秒のカウントダウンタイマー
     private void startGameTimer() {
         gameTimer = new CountDownTimer(GAME_TIME_MS, 100) { // 10秒間、0.1秒ごとに更新
 
-            // 0.1秒ごとに呼ばれる
+            //0.1秒ごとに呼ばれる
             @Override
             public void onTick(long millisUntilFinished) {
-                // 残り時間を秒単位で表示
+                //残り時間を秒単位で表示
                 timerText.setText("残り時間: " + (millisUntilFinished / 1000 + 1));
 
                 timeProgressBar.setProgress((int) millisUntilFinished);
             }
 
-            // 10秒経ったら呼ばれる
+            //10秒経ったら呼ばれる
             @Override
             public void onFinish() {
                 isGameFinished = true;
                 timerText.setText("終了！");
-                attackButton.setEnabled(false); // ボタンを押せなくする
-                stopUfoAnimation(); // アニメーション停止
+                attackButton.setEnabled(false); //ボタンを押せなくする
+                stopUfoAnimation(); //アニメーション停止
 
                 timeProgressBar.setProgress(0);
 
-                // 勝敗判定
+                //勝敗判定
                 checkResult();
             }
         };
         gameTimer.start();
     }
 
-    // 勝敗判定と結果の処理
+    //勝敗判定と結果の処理
     private void checkResult() {
         if (getContext() == null) return;
 
@@ -178,25 +179,25 @@ public class BattleFragment extends Fragment {
             new BattleResult().Defencebattle(getContext(), playerData,battleAreaId);
             // PlayerDataのUFOリストから、倒したエリアIDを削除
             playerData.ufoAreaIds.remove(battleAreaId);
-            dataManager.savePlayerData(getContext(), playerData); // 保存
+            dataManager.savePlayerData(getContext(), playerData); //保存
 
-            // 勝利ダイアログ
+            //勝利ダイアログ
             new AlertDialog.Builder(getContext())
                     .setTitle("勝利！")
                     .setMessage("UFOを撃退した！\n（" + tapCount + "回タップ）")
                     .setPositiveButton("OK", (dialog, which) -> navigateBackToMap())
-                    .setCancelable(false) // 戻るボタンで消せないように
+                    .setCancelable(false) //戻るボタンで消せないように
                     .show();
 
         } else {
-            // ★ 敗北
-            Log.d(TAG, "敗北... UFOはまだ残っている。");
+            //敗北
+            Log.d(TAG, "敗北. UFOはまだ残っている。");
 
             if (titleAdded) {
                 dataManager.savePlayerData(getContext(), playerData);
             }
 
-            // 敗北ダイアログ（データは変更しない）
+            //敗北ダイアログ（データは変更しない）
             new AlertDialog.Builder(getContext())
                     .setTitle("敗北...")
                     .setMessage("UFOの撃退に失敗した...\n（" + tapCount + "回タップ）")
@@ -205,32 +206,34 @@ public class BattleFragment extends Fragment {
                     .show();
         }
 
-        // どちらの場合もUI更新のお知らせを送信（マップ画面のUFOを消すため）
+        //どちらの場合もUI更新のお知らせを送信（マップ画面のUFOを消すため）
         Intent intent = new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
-    // マップ画面に戻る処理
+    //
+    //マップ画面に戻る処理
     private void navigateBackToMap() {
         if (isAdded()) { // FragmentがActivityに追加されているか確認
             NavHostFragment.findNavController(BattleFragment.this).popBackStack();
         }
     }
 
-    // ステップ6: UFOアニメーションのロジック
+    //UFOアニメーション
+    //画像切り替え
     private Runnable ufoAnimationRunnable = new Runnable() {
         @Override
         public void run() {
             if (ufoImage == null) return;
 
             if (isUfoImage1) {
-                ufoImage.setImageResource(R.drawable.ufo_image_2); // 2枚目の画像
+                ufoImage.setImageResource(R.drawable.ufo_image_2); //2枚目の画像
             } else {
-                ufoImage.setImageResource(R.drawable.ufo_image_1); // 1枚目の画像
+                ufoImage.setImageResource(R.drawable.ufo_image_1); //1枚目の画像
             }
             isUfoImage1 = !isUfoImage1;
 
-            // 200ミリ秒 (0.2秒) ごとに画像を切り替える
+            //200ミリ秒(0.2秒)ごとに画像を切り替える
             animationHandler.postDelayed(this, 200);
         }
     };
@@ -246,7 +249,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    // 画面が破棄されるときにタイマーを止める（メモリリーク防止）
+    //画面が破棄されるときにタイマーを止める（メモリリーク防止）
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -261,13 +264,13 @@ public class BattleFragment extends Fragment {
             if (!playerData.unlockedTitleIds.contains(newTitleId)) {
                 playerData.unlockedTitleIds.add(newTitleId);
 
-                // (任意) 称号獲得をトーストで通知
-                // android.widget.Toast.makeText(getContext(), "称号「神の指」を獲得！", android.widget.Toast.LENGTH_SHORT).show();
+                //称号獲得をトーストで通知
+                //android.widget.Toast.makeText(getContext(), "称号「神の指」を獲得！", android.widget.Toast.LENGTH_SHORT).show();
 
-                return true; // データが変更された
+                return true; //データが変更された
             }
         }
-        return false; // データ変更なし
+        return false; //データ変更なし
     }
     private void checkUfoDefeatTitles(PlayerData playerData) {
         int count = playerData.ufoDefeatCount;
