@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-// ゲーム内の基本的なデータを保持するクラス
+//ゲーム内の基本的なデータを保持するクラス
 public class PlayerData {
 
-    // プレイヤー名, いらない可能性大？
+    //プレイヤー名, いらない可能性大？
     public String playerName;
 
     //歩行、静止のデバッグ用
@@ -17,36 +17,26 @@ public class PlayerData {
     //UFOを倒した総数
     public int ufoDefeatCount;
 
-    // 現在の所持エネルギー
+    //現在の所持エネルギー
     public int energy;
 
-    // エネルギーの最大値
+    //エネルギーの最大値
     public int maxEnergy;
 
-    // 現実世界での総移動距離（メートル単位？）
+    //現実世界での総移動距離（メートル単位？）
     public double realWorldDistance;
 
-    // 解放済みのエリアIDのリスト
+    //解放済みのエリアIDのリスト
     public List<String> unlockedAreaIds;
 
-    // 獲得済みの称号IDのリスト
+    //獲得済みの称号IDのリスト
     public List<String> unlockedTitleIds;
 
     //UFO(敵)の出現エリア
     public List<String> ufoAreaIds;
 
-    /**
-     * エリアごとの最終防衛日時を記録するMap。
-     * キー: エリアID (String)
-     * 値: 最終防衛日時 (Long, ミリ秒)
-     */
     public Map<String, Long> lastDefenceDaysMap = new HashMap<>();
 
-    /**
-     * エリアごとの連続防衛日数を記録するMap。
-     * キー: エリアID (String)
-     * 値: 連続防衛日数 (Integer)
-     */
     public Map<String, Integer> consecutiveDefenceDaysMap = new HashMap<>();
 
     // デフォルトコンストラクタ

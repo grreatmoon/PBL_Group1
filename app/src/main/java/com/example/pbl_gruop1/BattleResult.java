@@ -7,13 +7,7 @@ import java.util.Calendar;
 
 //敵を倒した後の結果を処理し、連続撃破記録を更新するためのクラス。
 public class BattleResult{
-    /**
-     * 敵を倒した際に呼び出されるメソッド。
-     * 連続撃破日数の判定と更新、および関連する称号のアンロックを行う。
-     * @param context プレイヤーデータを保存するために使用するコンテクスト
-     */
     public void Defencebattle(Context context, PlayerData playerData, String areaId){
-        // GameDataManagerのロード/セーブを削除
 
         //プレイヤーデータがなければ処理を中断
         if (areaId == null || areaId.isEmpty() || playerData == null){
@@ -43,34 +37,21 @@ public class BattleResult{
 
         checkDefenceMilestoneTitles(playerData, consecutiveDays);
 
-        // 内部でのセーブ処理を削除
-        // dataManager.savePlayerData(context, playerData);
+        //dataManager.savePlayerData(context, playerData);
 
     }
 
-    /**
-     * 2つの時刻が同じ "日" であるか判定する。
-     * @param time1 時刻1 (ミリ秒)
-     * @param time2 時刻2 (ミリ秒)
-     * @return 同じ日であれば true
-     */
+
     private boolean isToday(long time1, long time2){
         //二つのカレンダーを定義. (時刻1,2をそれぞれ設定)
         Calendar cal1 = Calendar.getInstance();
-        cal1.setTimeInMillis(time1);            //カレンダー1：時刻1にセット
+        cal1.setTimeInMillis(time1);            //時刻1にセット
         Calendar cal2 = Calendar.getInstance();
-        cal2.setTimeInMillis(time2);            //カレンダー2：時刻2にセット
-        // ↓↓完全に同じ日であればreturn
+        cal2.setTimeInMillis(time2);            //時刻2にセット
+        //完全に同じ日であればreturn
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
-
-    /**
-     * time2 がtime1の "昨日" であるか判定する。
-     * @param time1 基準となる今日の時刻 (ミリ秒)
-     * @param time2 比較対象の過去の時刻 (ミリ秒)
-     * @return time2がtime1の "昨日" であればtrue
-     */
     private boolean isYesterday(long time1, long time2) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(time1);
@@ -82,21 +63,21 @@ public class BattleResult{
                 cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
     private void checkDefenceMilestoneTitles(PlayerData playerData, int consecutiveDays) {
-        // 10日
+        //10日
         if (consecutiveDays >= 10) {
             String newTitleId = "title_defence_10";
             if (!playerData.unlockedTitleIds.contains(newTitleId)) {
                 playerData.unlockedTitleIds.add(newTitleId);
             }
         }
-        // 100日
+        //100日
         if (consecutiveDays >= 100) {
             String newTitleId = "title_defence_100";
             if (!playerData.unlockedTitleIds.contains(newTitleId)) {
                 playerData.unlockedTitleIds.add(newTitleId);
             }
         }
-        // 365日
+        //365日
         if (consecutiveDays >= 365) {
             String newTitleId = "title_defence_365";
             if (!playerData.unlockedTitleIds.contains(newTitleId)) {

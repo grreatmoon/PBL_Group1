@@ -18,29 +18,30 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // 通知にデータが含まれているか確認
+        //通知にデータが含まれているか確認
         if (ActivityTransitionResult.hasResult(intent)) {
             ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
-            // 念のため、結果がnullでないことも確認
+            //結果がnullでないことも確認
             if (result != null) {
 
                 GameDataManager dataManager = GameDataManager.getInstance();
                 PlayerData playerData = dataManager.loadPlayerData(context);
-                boolean dataChanged = false;    //データが変更されたか追跡するフラグ
+                boolean dataChanged = false;
+                //データが変更されたか追跡するフラグ
 
-                // 通知されたイベント（歩き始めた、止まったなど）を一つずつ取り出す
+                //通知されたイベント（歩き始めた、止まった）を一つずつ取り出す
                 for (ActivityTransitionEvent event : result.getTransitionEvents()) {
 
-                    // どんな行動（アクティビティ）かを取得
+                    //どんな行動（アクティビティ）かを取得
                     String activity = toActivityString(event.getActivityType());
 
-                    // その行動を「開始した」のか「終了した」のかを取得
+                    //その行動を「開始した」or「終了した」かを取得
                     String transitionType = toTransitionTypeString(event.getTransitionType());
 
-                    // ログに記録して、動作しているか確認する
+                    //ログに記録して、動作しているか確認する(これはデバッグ用)
                     Log.d(TAG, "検知した行動: " + activity + ", 状態: " + transitionType);
 
-                    //もし「歩行」を「開始」したなら、速度チェックを行う
+                    //もし「歩行」を「開始」したなら、速度チェックを行う(車か歩行か判断するため)
                     if (event.getActivityType() == DetectedActivity.WALKING && event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         Log.d(TAG, "歩行開始を検知。GPSによる速度チェックを開始します。");
 
@@ -85,14 +86,14 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
                 if (dataChanged) {
                     Log.d(TAG, "状態を更新: " + playerData.currentStatus);
                     dataManager.savePlayerData(context, playerData);
-                    // UI更新のお知らせを送信（エネルギー獲得がなくても状態変更を通知するため）
+                    //UI更新のお知らせを送信（エネルギー獲得がなくても状態変更を通知するため）
                     LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED"));
                     Log.d(TAG, "UI更新のためのお知らせ（Broadcast）を送信しました。");
                 }
             }
         }
     }
-    // ログを見やすくするための補助機能
+    //ログを見やすくするためのメソッド
     private String toActivityString(int activity) {
         switch (activity) {
             case DetectedActivity.WALKING:
@@ -106,7 +107,7 @@ public class ActivityTransitionReceiver extends BroadcastReceiver {
         }
     }
 
-    // ログを見やすくするための補助機能
+    //ログを見やすくするためのメソッド
     private String toTransitionTypeString(int transitionType) {
         switch (transitionType) {
             case 0: // ENTER

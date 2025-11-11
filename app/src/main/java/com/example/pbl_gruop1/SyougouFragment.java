@@ -41,7 +41,7 @@ public class SyougouFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // RecyclerViewの初期設定
+        //RecyclerViewの初期設定
         this.recyclerView = view.findViewById(R.id.syougou_recycler_view);
         //LinearLayoutManagerの設定を忘れないように追加
         //this.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -56,7 +56,7 @@ public class SyougouFragment extends Fragment {
             return;
         }
 
-        // データ更新の通知を受け取るための受信機を設定
+        //データ更新の通知を受け取るための受信機を設定
         updateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -68,13 +68,13 @@ public class SyougouFragment extends Fragment {
         };
         updateUI();
 
-        // 追加した戻るボタンのIDを見つけてくる
+        //追加した戻るボタンのIDを見つけてくる
         Button backButton = view.findViewById(R.id.button_back_to_start);
-        // ボタンにクリックリスナーを設定
+        //ボタンにクリックリスナーを設定
         backButton.setOnClickListener(v -> {
-            // NavControllerを使って、指定したIDの画面（fragment_start）へ遷移する
+            //NavControllerを使って、指定したIDの画面（fragment_start）へ遷移する
             NavHostFragment.findNavController(SyougouFragment.this)
-                    .navigate(R.id.action_syougouFragment_to_startFragment); // このIDはnav_graph.xmlで定義します
+                    .navigate(R.id.action_syougouFragment_to_startFragment); //このIDはnav_graph.xmlで定義します
         });
 
     }
@@ -92,7 +92,7 @@ public class SyougouFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        // ★ 画面が見えなくなるときに受信機を解除 (重要！) ★
+        //画面が見えなくなるときに受信機を解除してる
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(updateReceiver);
         Log.d("SyougouFragment", "データ更新受信機を解除しました。");
     }
@@ -114,16 +114,13 @@ public class SyougouFragment extends Fragment {
             return;
         }
 
-        // 1. 全ての「静的な」称号リストを取得
+        //全ての称号リストを取得（静的らしい）
         List<Title> allStaticTitles = titleManager.getStaticTitles();
 
-        // 2. プレイヤーがアンロック済みの「動的な」称号リストを取得
-        //    getUnlockedTitlesは静的なものも含むため、動的なものだけをフィルタリングするか、
-        //    Adapter側でIDの重複をうまく処理する必要があります。
-        //    ここでは、よりシンプルな「獲得済みIDリスト」そのものを渡す方法を採用します。
+        //プレイヤーがアンロック済みの称号リストを取得（動的らしい）
         List<String> unlockedIds = playerData.unlockedTitleIds;
 
-        // 3. Adapterに「全静的称号リスト」と「獲得済みIDリスト」を渡してUIを更新する
+        //Adapterに「全静的称号リスト」と「獲得済みIDリスト」を渡してUIを更新する
         adapter.updateData(allStaticTitles, playerData);
         Log.d("SyougouFragment", "UIを更新しました。静的称号数: " + allStaticTitles.size());
     }

@@ -59,17 +59,17 @@ public class StartFragment extends Fragment {
         statusText = view.findViewById(R.id.status_text);
 
 
-        // fragment_start.xmlで定義したボタンのIDを指定
+        //fragment_start.xmlで定義したボタンのIDを指定
         ImageButton toMapButton = view.findViewById(R.id.to_map_button);
         toMapButton.setOnClickListener(v -> {
-            // nav_graph.xmlで定義したAction IDによって遷移
+            //nav_graph.xmlで定義したAction IDによって遷移
             NavHostFragment.findNavController(StartFragment.this)
                     .navigate(R.id.action_startFragment_to_mapFragment);
         });
 
         ImageButton toSyougouButton = view.findViewById(R.id.to_syougou_button);
         toSyougouButton.setOnClickListener(v -> {
-            // nav_graph.xmlで定義したAction IDによって遷移
+            //nav_graph.xmlで定義したAction IDによって遷移
             NavHostFragment.findNavController(StartFragment.this)
                     .navigate(R.id.action_startFragment_to_syougouFragment);
         });
@@ -106,7 +106,6 @@ public class StartFragment extends Fragment {
         int totalCount = areaManager.getAreaList().size();      //全エリアの数
         double liberationRate = 0.0;
         if (totalCount > 0) {
-            //割り算をして％を計算
             liberationRate = (double) unlockedCount / totalCount * 100.0;
         }
 
@@ -139,18 +138,18 @@ public class StartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // 画面が表示されるときに受信機を登録
+        //画面が表示されるときに受信機を登録
         IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(updateReceiver, filter);
         Log.d(TAG, "データ更新受信機を登録");
-        // 画面に戻ってきたときも必ずUIを更新する
+        //画面に戻ってきたときも必ずUIを更新する
         updateUI();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // 画面が見えなくなるときに受信機を解除
+        //画面が見えなくなるときに受信機を解除
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(updateReceiver);
         Log.d(TAG, "データ更新受信機を解除しました。");
     }

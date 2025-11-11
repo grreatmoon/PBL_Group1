@@ -58,22 +58,22 @@ public class AreaInfoDialogFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // ダイアログの背景を透明にして、CardViewの角丸が活きるようにする
+        //ダイアログの背景を透明にして、CardViewの角丸が活きるようにする
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        // XMLから部品を見つける
+        //XMLから部品を取得
         TextView titleText = view.findViewById(R.id.dialog_area_title);
         TextView messageText = view.findViewById(R.id.dialog_area_message);
         TextView enemyAlertText = view.findViewById(R.id.dialog_area_enemy_alert);
         Button positiveButton = view.findViewById(R.id.dialog_area_positive_button);
         Button negativeButton = view.findViewById(R.id.dialog_area_negative_button);
 
-        // Bundleから情報を取り出す (以前onCreateDialogにあったもの)
+        //Bundleから情報を取り出す
         Bundle args = getArguments();
         if (args == null) {
-            dismiss(); // データがなければ閉じる
+            dismiss(); //データがなければ閉じる
             return;
         }
 
@@ -88,12 +88,12 @@ public class AreaInfoDialogFragment extends DialogFragment {
         int defenceDays = playerData.consecutiveDefenceDaysMap.getOrDefault(areaId, 0);
         String defenceDaysText = "連続防衛日数: " + defenceDays + "日";
 
-        // タイトルを設定
+        //タイトルを設定
         titleText.setText(name);
 
-        // 状態に応じてメッセージとボタンを設定
+        //状態に応じてメッセージとボタンを設定
         if (isUnlocked) {
-            // --- 解放済みの場合 ---
+            //解放済みの場合
             String titleName = (title != null) ? title.getName() : "（称号情報なし）";
             String message = "獲得称号: " + titleName + "\n\n"
                     + "ステータス: 解放済み" + "\n\n"
@@ -102,30 +102,30 @@ public class AreaInfoDialogFragment extends DialogFragment {
             enemyAlertText.setVisibility(View.GONE); // まずは非表示にする
 
             if (isChallengeable) {
-                // (敵がいる場合)
+                //敵がいる場合
                 messageText.setText(message);
                 enemyAlertText.setText("※敵に挑戦するには\nエネルギーを80消費します");
                 enemyAlertText.setVisibility(View.VISIBLE);
-                //非表示→表示
+                //非表示から表示に
 
                 positiveButton.setText("挑戦");
                 positiveButton.setOnClickListener(v -> {
-                    handleBattleClick(areaId); // バトル処理を別メソッドに
+                    handleBattleClick(areaId); //バトル処理を別メソッドに
                 });
 
                 negativeButton.setText("戻る");
                 negativeButton.setOnClickListener(v -> dismiss());
 
             } else {
-                // (敵がいない場合)
+                //敵がいない場合
                 messageText.setText(message);
                 positiveButton.setText("OK");
                 positiveButton.setOnClickListener(v -> dismiss());
-                negativeButton.setVisibility(View.GONE); // 戻るボタンは1つで良い
+                negativeButton.setVisibility(View.GONE); //戻るボタンは1つでおｋ
             }
 
         } else {
-            // --- 未解放の場合 ---
+            //未解放の場合
             String message = "獲得称号: ？？？\n\n"
                     + "ステータス: 未解放" + "\n\n"
                     + defenceDaysText;
@@ -133,7 +133,7 @@ public class AreaInfoDialogFragment extends DialogFragment {
 
             positiveButton.setText("OK");
             positiveButton.setOnClickListener(v -> dismiss());
-            negativeButton.setVisibility(View.GONE); // 戻るボタンは1つで良い
+            negativeButton.setVisibility(View.GONE); //戻るボタンは1つでおｋ
         }
     }
     private void handleBattleClick(String areaId) {
@@ -144,15 +144,15 @@ public class AreaInfoDialogFragment extends DialogFragment {
         int battleCost = 80;
 
         if (currentPlayerData.energy >= battleCost) {
-            // エネルギー消費
+            //エネルギー消費
             currentPlayerData.energy -= battleCost;
             GameDataManager.getInstance().savePlayerData(ctx, currentPlayerData);
 
-            // BattleFragmentに渡すためのデータ（Bundle）を作成
+            //BattleFragmentに渡すためのデータ（Bundle）を作成
             Bundle bundle = new Bundle();
             bundle.putString("BATTLE_AREA_ID", areaId);
 
-            // NavControllerを使って BattleFragment に遷移する
+            //NavControllerを使ってBattleFragmentに遷移する
             try {
                 NavHostFragment.findNavController(AreaInfoDialogFragment.this)
                         .navigate(R.id.action_mapFragment_to_battleFragment, bundle);
@@ -161,10 +161,10 @@ public class AreaInfoDialogFragment extends DialogFragment {
                 Toast.makeText(ctx, "バトル画面への遷移に失敗しました", Toast.LENGTH_SHORT).show();
             }
 
-            dismiss(); // 遷移と同時にダイアログを閉じる
+            dismiss(); //遷移と同時にダイアログを閉じる
 
         } else {
-            // エネルギーが足りない場合
+            //エネルギーが足りない場合
             Toast.makeText(ctx, "エネルギーが足りません！ (必要: " + battleCost + ", 現在: " + currentPlayerData.energy + ")", Toast.LENGTH_LONG).show();
         }
     }
