@@ -190,15 +190,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startAppInitialization(){
-        try {
-            GameDataManager dataManager = GameDataManager.getInstance();
-            PlayerData playerData = dataManager.loadPlayerData(this);
-            playerData.energy = 100; // エネルギーを100に強制設定
-            dataManager.savePlayerData(this, playerData); // すぐに保存
-            Log.d(TAG, "!!!デバッグ用: エネルギーを100に設定しました!!!");
-        } catch (Exception e) {
-            Log.e(TAG, "デバッグ用のエネルギー設定に失敗", e);
-        }//デバッグ用なので後で消す
+//        try {
+//            GameDataManager dataManager = GameDataManager.getInstance();
+//            PlayerData playerData = dataManager.loadPlayerData(this);
+//            playerData.energy = 100; // エネルギーを100に強制設定
+//            dataManager.savePlayerData(this, playerData); // すぐに保存
+//            Log.d(TAG, "!!!デバッグ用: エネルギーを100に設定しました!!!");
+//        } catch (Exception e) {
+//            Log.e(TAG, "デバッグ用のエネルギー設定に失敗", e);
+//        }//デバッグ用なので後で消す
 
         Log.d("INIT","All requests got cleared.proceeding to next step");
         Toast.makeText(this,"All requests got cleared.proceeding to next step",Toast.LENGTH_SHORT).show();

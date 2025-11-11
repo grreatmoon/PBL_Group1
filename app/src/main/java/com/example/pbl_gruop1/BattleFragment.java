@@ -171,6 +171,9 @@ public class BattleFragment extends Fragment {
             Log.d(TAG, "勝利！ " + battleAreaId + " のUFOを倒した。");
             //敵を倒したことを通知
             EnemyManager.getInstance().setTodayEnemyAsDefeated(getContext());
+            //UFO討伐数のカウントと称号チェック
+            playerData.ufoDefeatCount++; // 討伐数を+1
+            checkUfoDefeatTitles(playerData); // 討伐数称号をチェック
             // 防衛日数カウンターを更新する
             new BattleResult().Defencebattle(getContext(), playerData,battleAreaId);
             // PlayerDataのUFOリストから、倒したエリアIDを削除
@@ -265,5 +268,29 @@ public class BattleFragment extends Fragment {
             }
         }
         return false; // データ変更なし
+    }
+    private void checkUfoDefeatTitles(PlayerData playerData) {
+        int count = playerData.ufoDefeatCount;
+
+        if (count >= 1) {
+            if (!playerData.unlockedTitleIds.contains("title_defeat_1")) {
+                playerData.unlockedTitleIds.add("title_defeat_1");
+            }
+        }
+        if (count >= 20) {
+            if (!playerData.unlockedTitleIds.contains("title_defeat_20")) {
+                playerData.unlockedTitleIds.add("title_defeat_20");
+            }
+        }
+        if (count >= 60) {
+            if (!playerData.unlockedTitleIds.contains("title_defeat_60")) {
+                playerData.unlockedTitleIds.add("title_defeat_60");
+            }
+        }
+        if (count >= 100) {
+            if (!playerData.unlockedTitleIds.contains("title_defeat_100")) {
+                playerData.unlockedTitleIds.add("title_defeat_100");
+            }
+        }
     }
 }

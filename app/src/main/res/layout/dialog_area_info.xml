@@ -47,8 +47,9 @@
                 android:layout_marginTop="12dp"
                 android:gravity="center"
                 android:text="！！敵が出現しました！！"
+                android:minLines="2"
                 android:textColor="#FF0000"
-                android:textSize="18sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible" />

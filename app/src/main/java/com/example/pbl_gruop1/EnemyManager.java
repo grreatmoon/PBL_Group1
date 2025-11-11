@@ -176,5 +176,26 @@ public class EnemyManager {
             }
         }
     }
+
+    //これはDebug用(試用会のためのメソッド)
+    public void validateCurrentUfo(Context context, PlayerData playerData) {
+        loadData(context); // EnemyManagerの現在のUFO情報をロード
+
+        if (todayEnemyAreaId == null) {
+            return; // もともとUFOがいないなら何もしない
+        }
+
+        // 現在UFOがいるエリア(todayEnemyAreaId)が、
+        // 最新の解放済みエリアリスト(playerData.unlockedAreaIds)に含まれているかチェック
+        if (!playerData.unlockedAreaIds.contains(todayEnemyAreaId)) {
+            // 含まれていない = 未開放になったエリアにUFOがいた
+            Log.d("EnemyManager", "デバッグ操作によりUFOのいたエリアが未開放になりました。UFOを削除します。");
+
+            todayEnemyAreaId = null; // 今日のUFOを消す
+            isTodayEnemyDefeated = false; // 念のためリセット
+
+            saveData(context); // 変更を保存
+        }
+    }
 }
 

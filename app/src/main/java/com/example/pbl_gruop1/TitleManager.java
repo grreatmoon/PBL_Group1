@@ -15,17 +15,21 @@ public class TitleManager {
         staticTitlesMap = new HashMap<>();
 
         // --- 事前に定義できる、数が決まっている称号だけを登録 ---
-        staticTitlesMap.put("title_myosenji", new Title("title_myosenji", "妙泉寺の僧侶", "妙泉寺を訪れる", "syougou_image_myosenji", "Myosenji"));
-        staticTitlesMap.put("title_genkipark", new Title("title_genkipark", "元気の森の冒険家", "元気の森公園を訪れる", "syougou_image_genkipark", "GenkiPark"));
-        staticTitlesMap.put("title_koshicityhall", new Title("title_koshicityhall", "合志市の市民", "合志市役所を訪れる", "syougou_image_koshicityhall", "KoshiCityHall"));
-        staticTitlesMap.put("title_lutherchurch", new Title("title_lutherchurch", "教会の聖歌隊", "ルーテル合志教会を訪れる", "syougou_image_lutherchurch", "LutherChurch"));
-        staticTitlesMap.put("title_countrypark", new Title("title_countrypark", "パークの探検家", "カントリーパークを訪れる", "syougou_image_countrypark", "CountryPark"));
-        staticTitlesMap.put("title_bentenmountain", new Title("title_bentenmountain", "弁天山の征服者", "弁天山を訪れる", "syougou_image_bentenmountain", "BentenMountain"));
-        staticTitlesMap.put("title_koshimaster", new Title("title_koshimaster", "合志マスター", "合志市の全スポットを訪れる", "syougou_image_koshimaster", "KoshiMaster"));
-        staticTitlesMap.put("title_god_finger", new Title("title_god_finger", "神の指", "バトルで80回以上のタップを記録する", "syougou_image_locked", null));
-        staticTitlesMap.put("title_defence_10", new Title("title_defence_10", "駆け出し防衛者", "任意のエリアを10日連続で防衛する", "syougou_image_locked", null));
-        staticTitlesMap.put("title_defence_100", new Title("title_defence_100", "中堅守護者", "任意のエリアを100日連続で防衛する", "syougou_image_locked", null));
-        staticTitlesMap.put("title_defence_365", new Title("title_defence_365", "合志市の英雄", "任意のエリアを365日連続で防衛する", "syougou_image_locked", null));
+        staticTitlesMap.put("title_myosenji", new Title("title_myosenji", "妙泉寺の僧侶", "妙泉寺を訪れる", "syougou_image_myosenji", "Myosenji","AREA"));
+        staticTitlesMap.put("title_genkipark", new Title("title_genkipark", "元気の森の冒険家", "元気の森公園を訪れる", "syougou_image_genkipark", "GenkiPark","AREA"));
+        staticTitlesMap.put("title_koshicityhall", new Title("title_koshicityhall", "合志市の市民", "合志市役所を訪れる", "syougou_image_koshicityhall", "KoshiCityHall","AREA"));
+        staticTitlesMap.put("title_lutherchurch", new Title("title_lutherchurch", "教会の聖歌隊", "ルーテル合志教会を訪れる", "syougou_image_lutherchurch", "LutherChurch","AREA"));
+        staticTitlesMap.put("title_countrypark", new Title("title_countrypark", "パークの探検家", "カントリーパークを訪れる", "syougou_image_countrypark", "CountryPark","AREA"));
+        staticTitlesMap.put("title_bentenmountain", new Title("title_bentenmountain", "弁天山の征服者", "弁天山を訪れる", "syougou_image_bentenmountain", "BentenMountain","AREA"));
+        staticTitlesMap.put("title_koshimaster", new Title("title_koshimaster", "合志マスター", "合志市の全スポットを訪れる", "syougou_image_koshimaster", "KoshiMaster","AREA"));
+        staticTitlesMap.put("title_god_finger", new Title("title_god_finger", "神の指", "バトルで80回以上のタップを記録する", "syougou_image_locked", null,"BATTLE"));
+        staticTitlesMap.put("title_defeat_1", new Title("title_defeat_1", "ルーキーハンター", "UFOを1体撃退する", "syougou_image_locked", null, "BATTLE"));
+        staticTitlesMap.put("title_defeat_20", new Title("title_defeat_20", "エースハンター", "UFOを20体撃退する", "syougou_image_locked", null, "BATTLE"));
+        staticTitlesMap.put("title_defeat_60", new Title("title_defeat_60", "ベテランハンター", "UFOを60体撃退する", "syougou_image_locked", null, "BATTLE"));
+        staticTitlesMap.put("title_defeat_100", new Title("title_defeat_100", "伝説のハンター", "UFOを100体撃退する", "syougou_image_locked", null, "BATTLE"));
+        staticTitlesMap.put("title_defence_10", new Title("title_defence_10", "ベテラン防衛者", "任意のエリアを10日連続で防衛する", "syougou_image_locked", null, "DEFENSE"));
+        staticTitlesMap.put("title_defence_100", new Title("title_defence_100", "百日の守護者", "任意のエリアを100日連続で防衛する", "syougou_image_locked", null, "DEFENSE"));
+        staticTitlesMap.put("title_defence_365", new Title("title_defence_365", "合志市の英雄", "任意のエリアを365日連続で防衛する", "syougou_image_locked", null, "DEFENSE"));
     }
 
     public static synchronized TitleManager getInstance() {
@@ -39,7 +43,7 @@ public class TitleManager {
         return new ArrayList<>(staticTitlesMap.values());
     }
 
-//【変更点2】プレイヤーが持っているIDリストから、表示用のTitleリストを生成するメソッド
+//プレイヤーが持っているIDリストから、表示用のTitleリストを生成するメソッド
 public List<Title> getUnlockedTitles(List<String> unlockedIds) {
     List<Title> resultList = new ArrayList<>();
     if (unlockedIds == null) {
@@ -56,14 +60,14 @@ public List<Title> getUnlockedTitles(List<String> unlockedIds) {
 }
 
 
-//【変更点3】称号IDを元に、Titleオブジェクトを返す「翻訳」メソッド
+//称号IDを元に、Titleオブジェクトを返す「翻訳」メソッド
 public Title getTitleById(String titleId) {
     // 1. まず、静的な称号リストにIDがあるか探す
     if (staticTitlesMap.containsKey(titleId)) {
         return staticTitlesMap.get(titleId);
     }
 
-    // 2. なければ、動的な「連続防衛称号」の形式かチェックする
+    //なければ、動的な「連続防衛称号」の形式かチェックする
     if (titleId != null && titleId.startsWith("title_") && titleId.contains("_defence_")) {
         try {
             String[] parts = titleId.split("_");
@@ -71,19 +75,19 @@ public Title getTitleById(String titleId) {
             String areaId = parts[1];
             int days = Integer.parseInt(parts[3]);
 
-            // ★★★ ここで動的にTitleオブジェクトを生成する ★★★
+            //ここで動的にTitleオブジェクトを生成
             return createConsecutiveDefenceTitle(areaId, days);
 
         } catch (Exception e) {
             Log.e("TitleManager", "不正な形式の動的称号IDです: " + titleId, e);
-            return null; // 不正なIDならnullを返す
+            return null; //不正なIDならnullを返す
         }
     }
-    // 3. どの形式にも当てはまらなければ、nullを返す
+    //どの形式にも当てはまらなければ、nullを返す
     return null;
 }
 
-    //【変更点4】連続防衛称号の情報を動的に生成するヘルパーメソッド
+    //連続防衛称号の情報を動的に生成するヘルパーメソッド
 private Title createConsecutiveDefenceTitle(String areaId, int days) {
     String titleId = "title_" + areaId + "_defence_" + days;
 
@@ -130,7 +134,7 @@ private Title createConsecutiveDefenceTitle(String areaId, int days) {
             imageName = "default_image"; // デフォルト画像
             break;
     }
-    return new Title(titleId, titleName, description, imageName, null);
+    return new Title(titleId, titleName, description, imageName, null,"DEFENSE");
     }
 
     public Title getTitleByAreaId(String areaId) {

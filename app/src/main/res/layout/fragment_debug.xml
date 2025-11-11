@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="【ルール】"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="・歩くとエネルギーがたまります。\n・UFOとのバトルにはエネルギーが80必要です。\n・UFOは30タップで撃退できます。" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\n【デバッグメニュー】"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/debug_energy_max_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="エネルギーをMAXにする" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="エネルギー設定:"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/debug_energy_value_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            tools:text="50" />
+
+        <SeekBar
+            android:id="@+id/debug_energy_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\nエリア解放 (ON=解放済み)"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/debug_toggle_myosenji"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="妙泉寺"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/debug_toggle_genkipark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="元気の森公園"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/debug_toggle_koshicityhall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="合志市役所"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/debug_toggle_lutherchurch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ルーテル教会"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/debug_toggle_countrypark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="カントリーパーク"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/debug_toggle_bentenmountain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="弁天山"
+            android:textSize="16sp" />
+        <Button
+            android:id="@+id/debug_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="戻る" />
+
+    </LinearLayout>
+</ScrollView>

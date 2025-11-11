@@ -14,8 +14,8 @@ public class PlayerData {
     //歩行、静止のデバッグ用
     public String currentStatus;
 
-    // プレイヤーレベル
-    public int level;
+    //UFOを倒した総数
+    public int ufoDefeatCount;
 
     // 現在の所持エネルギー
     public int energy;
@@ -53,7 +53,6 @@ public class PlayerData {
     // 新規プレイヤー作成時の初期値を設定
     public PlayerData() {
         this.playerName = "New Player";
-        this.level = 1;
         this.energy = 0;
         this.maxEnergy = 100;
         this.realWorldDistance = 0.0; // 移動距離を0.0で初期化
@@ -61,5 +60,6 @@ public class PlayerData {
         this.unlockedTitleIds = new ArrayList<>();
         this.ufoAreaIds = new ArrayList<>();
         this.currentStatus = "停止中";
+        this.ufoDefeatCount = 0;
     }
 }

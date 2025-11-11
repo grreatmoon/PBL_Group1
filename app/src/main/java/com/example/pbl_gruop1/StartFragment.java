@@ -74,6 +74,12 @@ public class StartFragment extends Fragment {
                     .navigate(R.id.action_startFragment_to_syougouFragment);
         });
 
+        //Infoボタンのリスナー(Debugボタン)
+        view.findViewById(R.id.debug_button).setOnClickListener(v -> {
+            NavHostFragment.findNavController(StartFragment.this)
+                    .navigate(R.id.action_startFragment_to_debugFragment);
+        });
+
         //Receiverを初期化
         updateReceiver = new BroadcastReceiver() {
             @Override
@@ -106,7 +112,7 @@ public class StartFragment extends Fragment {
 
         //UIにデータを表示する
         if (levelTextView != null) {
-            levelTextView.setText("Lv. " + playerData.level);
+            levelTextView.setText("討伐数：" + playerData.ufoDefeatCount);
         }
         if (kaihouritsuTextView != null) {
             kaihouritsuTextView.setText("解放率");
