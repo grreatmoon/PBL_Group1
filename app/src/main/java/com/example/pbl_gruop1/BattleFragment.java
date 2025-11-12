@@ -259,7 +259,7 @@ public class BattleFragment extends Fragment {
         stopUfoAnimation();
     }
     private boolean checkTapTitle(PlayerData playerData, int taps) {
-        if (taps > 80) {
+        if (taps > 120) {
             String newTitleId = "title_god_finger";
             if (!playerData.unlockedTitleIds.contains(newTitleId)) {
                 playerData.unlockedTitleIds.add(newTitleId);

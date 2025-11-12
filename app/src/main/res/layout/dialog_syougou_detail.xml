@@ -9,10 +9,13 @@
 
     <ImageView
         android:id="@+id/dialog_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
+        android:background="@drawable/gorgeous_frame_bg"
+        android:padding="12dp"
+        android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_foreground" />
 
     <TextView

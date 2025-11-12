@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.SeekBar; // SeekBarをインポート
 import android.widget.TextView; // TextViewをインポート
 import android.widget.Toast;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -69,6 +70,7 @@ public class DebugFragment extends Fragment {
         setupToggleSwitch(view, R.id.debug_toggle_lutherchurch, "LutherChurch", "ルーテル教会");
         setupToggleSwitch(view, R.id.debug_toggle_countrypark, "CountryPark", "カントリーパーク");
         setupToggleSwitch(view, R.id.debug_toggle_bentenmountain, "BentenMountain", "弁天山");
+        setupAllTitlesToggle(view);
     }
 
     //エネルギーSeekBarのメソッド
@@ -182,4 +184,39 @@ public class DebugFragment extends Fragment {
         Intent intent = new Intent("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
         LocalBroadcastManager.getInstance(appContext).sendBroadcast(intent);
     }
+
+    private void setupAllTitlesToggle(View rootView) {
+        SwitchCompat allTitlesSwitch = rootView.findViewById(R.id.debug_toggle_all_titles);
+        if (allTitlesSwitch == null) return;
+
+        //このスイッチは状態を反映しない
+        allTitlesSwitch.setChecked(false);
+
+        allTitlesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PlayerData currentData = dataManager.loadPlayerData(appContext);
+
+            if (isChecked) {
+                //TitleManagerから全称号のマスターリストを取得
+                List<Title> allStaticTitles = TitleManager.getInstance().getStaticTitles();
+
+                //まだ持っていない称号IDだけを追加
+                for (Title title : allStaticTitles) {
+                    if (!currentData.unlockedTitleIds.contains(title.getId())) {
+                        currentData.unlockedTitleIds.add(title.getId());
+                    }
+                }
+                dataManager.savePlayerData(appContext, currentData);
+                showToast("全称号を解放しました");
+
+            } else {
+                currentData.unlockedTitleIds.clear(); //全ての称号を削除
+                dataManager.savePlayerData(appContext, currentData);
+                showToast("全称号をリセットしました");
+
+                //OFFにした後、再度ONにするには一度スイッチをOFFに戻す必要がある
+            }
+
+        });
+    }
+
 }
