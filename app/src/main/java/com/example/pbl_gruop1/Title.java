@@ -9,14 +9,16 @@ public class Title implements Serializable{
     private String imageName; //称号のアイコンの画像のリソースID
     private String requiredAreaId;  //この称号を開放するために必要なエリアのID
     private String category;    //称号を整理用のカテゴリ
+    private int displayOrder;   //称号を整理用の値(カテゴリで区分した後の比較)
 
-    public Title(String id, String name, String description, String imageName, String requiredAreaId,String category) {
+    public Title(String id, String name, String description, String imageName, String requiredAreaId,String category,int displayOrder) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.imageName = imageName;
         this.requiredAreaId = requiredAreaId;
         this.category = category;
+        this.displayOrder = displayOrder;
     }
 
     public String getId() {
@@ -39,5 +41,6 @@ public class Title implements Serializable{
         return requiredAreaId;
     }
     public String getCategory() { return category; }
+    public int getDisplayOrder() { return displayOrder; }
 
 }

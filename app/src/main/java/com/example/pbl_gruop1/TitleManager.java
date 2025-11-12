@@ -14,21 +14,21 @@ public class TitleManager {
     private TitleManager() {    //称号の情報を定義
         staticTitlesMap = new HashMap<>();
 
-        staticTitlesMap.put("title_myosenji", new Title("title_myosenji", "妙泉寺の僧侶", "妙泉寺を訪れる", "syougou_image_myosenji", "Myosenji","AREA"));
-        staticTitlesMap.put("title_genkipark", new Title("title_genkipark", "元気の森の冒険家", "元気の森公園を訪れる", "syougou_image_genkipark", "GenkiPark","AREA"));
-        staticTitlesMap.put("title_koshicityhall", new Title("title_koshicityhall", "合志市の市民", "合志市役所を訪れる", "syougou_image_koshicityhall", "KoshiCityHall","AREA"));
-        staticTitlesMap.put("title_lutherchurch", new Title("title_lutherchurch", "教会の聖歌隊", "ルーテル合志教会を訪れる", "syougou_image_lutherchurch", "LutherChurch","AREA"));
-        staticTitlesMap.put("title_countrypark", new Title("title_countrypark", "パークの探検家", "カントリーパークを訪れる", "syougou_image_countrypark", "CountryPark","AREA"));
-        staticTitlesMap.put("title_bentenmountain", new Title("title_bentenmountain", "弁天山の征服者", "弁天山を訪れる", "syougou_image_bentenmountain", "BentenMountain","AREA"));
-        staticTitlesMap.put("title_koshimaster", new Title("title_koshimaster", "合志マスター", "合志市の全スポットを訪れる", "syougou_image_koshimaster", "KoshiMaster","AREA"));
-        staticTitlesMap.put("title_god_finger", new Title("title_god_finger", "神の指", "バトルで80回以上のタップを記録する", "syougou_image_locked", null,"BATTLE"));
-        staticTitlesMap.put("title_defeat_1", new Title("title_defeat_1", "ルーキーハンター", "UFOを1体撃退する", "syougou_image_locked", null, "BATTLE"));
-        staticTitlesMap.put("title_defeat_20", new Title("title_defeat_20", "エースハンター", "UFOを20体撃退する", "syougou_image_locked", null, "BATTLE"));
-        staticTitlesMap.put("title_defeat_60", new Title("title_defeat_60", "ベテランハンター", "UFOを60体撃退する", "syougou_image_locked", null, "BATTLE"));
-        staticTitlesMap.put("title_defeat_100", new Title("title_defeat_100", "伝説のハンター", "UFOを100体撃退する", "syougou_image_locked", null, "BATTLE"));
-        staticTitlesMap.put("title_defence_10", new Title("title_defence_10", "ベテラン防衛者", "任意のエリアを10日連続で防衛する", "syougou_image_locked", null, "DEFENSE"));
-        staticTitlesMap.put("title_defence_100", new Title("title_defence_100", "百日の守護者", "任意のエリアを100日連続で防衛する", "syougou_image_locked", null, "DEFENSE"));
-        staticTitlesMap.put("title_defence_365", new Title("title_defence_365", "合志市の英雄", "任意のエリアを365日連続で防衛する", "syougou_image_locked", null, "DEFENSE"));
+        staticTitlesMap.put("title_myosenji", new Title("title_myosenji", "妙泉寺の僧侶", "妙泉寺を訪れる", "syougou_image_myosenji", "Myosenji","AREA", 1));
+        staticTitlesMap.put("title_genkipark", new Title("title_genkipark", "元気の森の冒険家", "元気の森公園を訪れる", "syougou_image_genkipark", "GenkiPark","AREA", 2));
+        staticTitlesMap.put("title_koshicityhall", new Title("title_koshicityhall", "合志市の市民", "合志市役所を訪れる", "syougou_image_koshicityhall", "KoshiCityHall","AREA", 3));
+        staticTitlesMap.put("title_lutherchurch", new Title("title_lutherchurch", "教会の聖歌隊", "ルーテル合志教会を訪れる", "syougou_image_lutherchurch", "LutherChurch","AREA", 4));
+        staticTitlesMap.put("title_countrypark", new Title("title_countrypark", "パークの探検家", "カントリーパークを訪れる", "syougou_image_countrypark", "CountryPark","AREA", 5));
+        staticTitlesMap.put("title_bentenmountain", new Title("title_bentenmountain", "弁天山の征服者", "弁天山を訪れる", "syougou_image_bentenmountain", "BentenMountain","AREA", 6));
+        staticTitlesMap.put("title_koshimaster", new Title("title_koshimaster", "合志マスター", "合志市の全スポットを訪れる", "syougou_image_koshimaster", "KoshiMaster","AREA", 7));
+        staticTitlesMap.put("title_god_finger", new Title("title_god_finger", "神の指", "バトルで80回以上のタップを記録する", "syougou_image_locked", null,"BATTLE", 1));
+        staticTitlesMap.put("title_defeat_1", new Title("title_defeat_1", "ルーキーハンター", "UFOを1体撃退する", "syougou_image_locked", null, "BATTLE", 2));
+        staticTitlesMap.put("title_defeat_20", new Title("title_defeat_20", "エースハンター", "UFOを20体撃退する", "syougou_image_locked", null, "BATTLE", 3));
+        staticTitlesMap.put("title_defeat_60", new Title("title_defeat_60", "ベテランハンター", "UFOを60体撃退する", "syougou_image_locked", null, "BATTLE", 4));
+        staticTitlesMap.put("title_defeat_100", new Title("title_defeat_100", "伝説のハンター", "UFOを100体撃退する", "syougou_image_locked", null, "BATTLE", 5));
+        staticTitlesMap.put("title_defence_10", new Title("title_defence_10", "ベテラン防衛者", "任意のエリアを10日連続で防衛する", "syougou_image_locked", null, "DEFENSE", 1));
+        staticTitlesMap.put("title_defence_100", new Title("title_defence_100", "百日の守護者", "任意のエリアを100日連続で防衛する", "syougou_image_locked", null, "DEFENSE", 2));
+        staticTitlesMap.put("title_defence_365", new Title("title_defence_365", "合志市の英雄", "任意のエリアを365日連続で防衛する", "syougou_image_locked", null, "DEFENSE", 3));
     }
 
     public static synchronized TitleManager getInstance() {
@@ -130,7 +130,7 @@ private Title createConsecutiveDefenceTitle(String areaId, int days) {
             imageName = "default_image"; //デフォルト画像
             break;
     }
-    return new Title(titleId, titleName, description, imageName, null,"DEFENSE");
+    return new Title(titleId, titleName, description, imageName, null,"DEFENSE", 4);
     }
 
     public Title getTitleByAreaId(String areaId) {
