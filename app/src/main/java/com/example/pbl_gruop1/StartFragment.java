@@ -80,6 +80,11 @@ public class StartFragment extends Fragment {
                     .navigate(R.id.action_startFragment_to_debugFragment);
         });
 
+        view.findViewById(R.id.info_button).setOnClickListener(v -> {
+            NavHostFragment.findNavController(StartFragment.this)
+                    .navigate(R.id.action_startFragment_to_infomationFragment);
+        });
+
         //Receiverを初期化
         updateReceiver = new BroadcastReceiver() {
             @Override

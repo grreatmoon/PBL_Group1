@@ -305,4 +305,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <ImageButton
+        android:id="@+id/info_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+
+        android:src="@android:drawable/ic_dialog_info"
+
+        android:background="@drawable/rounded_text_bg"
+
+        android:contentDescription="インフォメーション"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/debug_button"
+
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="32dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
