@@ -41,12 +41,6 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
         if (unlockedIds.containsAll(requiredTitles)) {
             //条件を満たしていれば、「合志マスター」のIDをプレイヤーデータに追加
             unlockedIds.add("title_koshimaster");
-
-            //(任意) プレイヤーに称号獲得を通知する
-            //Toast.makeText(context, "称号「合志マスター」を獲得しました！", Toast.LENGTH_LONG).show();
-
-            //(任意) 変更を即座に保存する（もしGameDataManagerがあるなら）
-            //GameDataManager.getInstance().savePlayerData(context, this.playerData);
         }
     }
     //合志マスターの取得状況チェックここまで
@@ -144,7 +138,8 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
                 return categoryCompare;
             }
             //同じカテゴリ内なら、名前（ID）で並び替え
-            return t1.getId().compareTo(t2.getId());
+            //return t1.getId().compareTo(t2.getId());
+            return Integer.compare(t1.getDisplayOrder(), t2.getDisplayOrder());
         });
 
         //既存のリストをクリアして新しいデータを追加

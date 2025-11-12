@@ -45,7 +45,7 @@ public class ActivityTrackingService extends Service {
     private final Handler energyHandler = new Handler(Looper.getMainLooper());
     private Runnable energyRunnable;
     private boolean isEnergyTimerRunning = false;
-    private static final long ENERGY_INTERVAL = 10000; // 10秒 (10000ミリ秒)
+    private static final long ENERGY_INTERVAL = 25000; // 25秒 (25000ミリ秒)
 
 
     //onCreateはサービスが一番最初に作成される時に一回だけ呼ばれる
@@ -227,7 +227,7 @@ public class ActivityTrackingService extends Service {
         //既にタイマーが作動中なら何もしない
         if (isEnergyTimerRunning) return;
         isEnergyTimerRunning = true;
-        Log.d(TAG, "10秒ごとのエネルギー加算タイマーを開始します。");
+        Log.d(TAG, "25秒ごとのエネルギー加算タイマーを開始します。");
 
         energyRunnable = new Runnable() {
             @Override
