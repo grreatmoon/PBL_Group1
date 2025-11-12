@@ -25,10 +25,29 @@
             android:text="\n【対象画像一覧】"
             android:textSize="18sp"
             android:textStyle="bold" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="　・start_background_image.png（起動画面背景）\n　・map_background.png（マップ画面背景）\n　・battle_background.png（バトル画面背景）" />
+            android:text="・start_background_image.png (起動画面背景)\n
+・map_background.png (マップ画面背景)\n
+・battle_background.png (バトル画面背景)\n
+(以下、称号イラスト)\n
+・syougou_image_myosenji.png\n
+・syougou_image_genkipark.png\n
+・syougou_image_koshicityhall.png\n
+・syougou_image_lutherchurch.png\n
+・syougou_image_countrypark.png\n
+・syougou_image_bentenmountain.png\n
+・syougou_image_koshimaster.png\n
+・syougou_image_god_hand.png\n
+・syougou_image_rookie_hunter.png\n
+・syougou_image_ace_hunter.png\n
+・syougou_image_elite_hunter.png\n
+・syougou_image_legend_hunter.png\n
+・syougou_image_veteran_defender.png\n
+・syougou_image_100day_defender.png\n
+・syougou_image_koshi_hero.png\n" />
 
         <Button
             android:id="@+id/debug_back_button"

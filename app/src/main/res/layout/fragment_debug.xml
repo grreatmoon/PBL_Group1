@@ -101,6 +101,15 @@
             android:layout_height="wrap_content"
             android:text="弁天山"
             android:textSize="16sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/debug_toggle_all_titles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="全称号 (ON=全解放 / OFF=全リセット)"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
+
         <Button
             android:id="@+id/debug_back_button"
             android:layout_width="wrap_content"
