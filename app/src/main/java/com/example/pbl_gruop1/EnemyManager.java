@@ -3,8 +3,10 @@
 package com.example.pbl_gruop1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,6 +88,17 @@ public class EnemyManager {
                     checkDefenceMilestoneTitles(playerData, consecutiveDays);
                 }
             }
+
+            playerData.energy = 0;
+            Log.d("EnemyManager", "日付の更新により所持エネルギーが0にリセットされました。");
+
+            // データを保存
+            GameDataManager.getInstance().savePlayerData(context, playerData);
+
+            // エネルギーが更新されたことをアプリ内に通知（ブロードキャスト）する
+            Intent intent = new Intent("com.example.pbl_gruop1.ENERGY_UPDATED");
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            Log.d("EnemyManager", "エネルギー更新の通知を送信しました。");
 
             //新しいUFOの抽選
             if (playerData.unlockedAreaIds != null && !playerData.unlockedAreaIds.isEmpty()) {

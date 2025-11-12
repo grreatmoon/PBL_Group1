@@ -22,10 +22,14 @@
         android:label="DebugFragment"
         tools:layout="@layout/fragment_debug" />
     <fragment
-        android:id="@+id/infomationFragment"
-        android:name="com.example.pbl_gruop1.InfomationFragment"
-        android:label="InfomationFragment"
-        tools:layout="@layout/fragment_info" />
+        android:id="@+id/captionFragment"
+        android:name="com.example.pbl_gruop1.CaptionFragment"
+        android:label="CaptionFragment"
+        tools:layout="@layout/fragment_caption" />
+    <action
+        android:id="@+id/action_captionFragment_to_startFragment"
+        app:destination="@id/startFragment" />
+
     <fragment
         android:id="@+id/startFragment"
         android:name="com.example.pbl_gruop1.StartFragment"
@@ -41,8 +45,8 @@
             android:id="@+id/action_startFragment_to_debugFragment"
             app:destination="@id/debugFragment" />
         <action
-            android:id="@+id/action_startFragment_to_infomationFragment"
-            app:destination="@id/infomationFragment" />
+            android:id="@+id/action_startFragment_to_captionFragment"
+            app:destination="@id/captionFragment" />
     </fragment>
     <fragment
         android:id="@+id/syougouFragment"

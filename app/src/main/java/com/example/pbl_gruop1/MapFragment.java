@@ -3,6 +3,7 @@ package com.example.pbl_gruop1;
 import android.content.BroadcastReceiver;import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Looper;
 import android.util.Log;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver; // ★ Viewのサイズ取得のために追加
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +25,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.pbl_gruop1.databinding.FragmentMapBinding;
 import java.util.List;
+import java.util.logging.Handler;
 
 //View.OnTouchListener を実装
 public class MapFragment extends Fragment implements View.OnTouchListener {
@@ -49,6 +52,10 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
 
     private BroadcastReceiver updateReceiver;
     private static final String TAG = "MapFragment";
+
+    private final android.os.Handler animationHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private ImageView currentUfoView = null; // 現在アニメーション中のUFO
+    private boolean isUfoImage1 = true;
 
     @Nullable
     @Override
@@ -172,6 +179,12 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         super.onPause();
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(updateReceiver);
         Log.d(TAG, "データ更新受信機を解除しました。");
+
+        // 画面が非表示になる際に、すべてのアニメーションを停止する
+        if (ufoAnimatorSet != null) {
+            ufoAnimatorSet.cancel();
+        }
+        animationHandler.removeCallbacks(ufoAnimationRunnable);
     }
 
     //タッチイベントを処理するメソッド
@@ -218,92 +231,26 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     }
 
 
-    //onTouchメソッド⇒GestureListener, ScaleListenerへイベントを知らせる受付係を担当
-    //GestureListener⇒onScroll, onDoubleTapEvent, onDownの指一本での操作を担当
-    //ScaleListener⇒onScaleの指二本操作を担当
-    //ここから以前の記述を復帰させるならコメントアウト外す
-
-        /*if (!isMapInteractionEnabled) {
-            return false;
-        }
-        // 【マップ操作モード】の場合
-        final int action = event.getActionMasked();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                lastTouchX = event.getX();
-                lastTouchY = event.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                // ピンチ操作中でなければ、マップを移動させる
-                if (!scaleDetector.isInProgress()) {
-                    final float dx = event.getX() - lastTouchX;
-                    final float dy = event.getY() - lastTouchY;
-                    posX += dx;
-                    posY += dy;
-                }
-                lastTouchX = event.getX();
-                lastTouchY = event.getY();
-                clampTranslations();
-                applyTranslation();
-                break;
-        }
-        // マップ操作モードでは、イベントを消費したことを示すためにtrueを返す
-        return true;
-    }
-
-    // --- ダブルタップを検出するためのインナークラス ---
-    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
-            // ダブルタップされたら、現在のスケールに応じて拡大または縮小する
-            if (scaleFactor > minScaleFactor * 1.5) { // ある程度拡大されていたら
-                scaleFactor = minScaleFactor; // 最小サイズに戻す
-            } else {
-                scaleFactor = scaleFactor * 2.0f; // 2倍に拡大
-            }
-            // ピボット（拡大中心）をタップした点に設定
-            binding.mapContainer.setPivotX(e.getX());
-            binding.mapContainer.setPivotY(e.getY());
-            updateScale();
-            clampTranslations();
-            applyTranslation();
-            return true;
-            /*
-            if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                // ダブルタップの2回目のタップが開始された
-                isZooming = true;
-                // 拡大縮小の中心をタップした場所に設定
-                // ピボットの座標は、ビューのローカル座標系で指定する必要がある
-                binding.mapContainer.setPivotX(e.getX() - posX);
-                binding.mapContainer.setPivotY(e.getY() - posY);
-                // Y座標の基準をリセット
-                lastTouchY = e.getY();
-            }
-            return true;
-        }*/
-
-/*
-        @Override
-        public boolean onDown(MotionEvent e) {
-            // これをtrueにしないと他のジェスチャーが認識されない
-            return true;
-        }
-    }
-
-    //ピンチ操作でズームする
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            scaleFactor *= detector.getScaleFactor();
-            // ピボット（拡大中心）をピンチ操作の中心点に設定
-            binding.mapContainer.setPivotX(detector.getFocusX());
-            binding.mapContainer.setPivotY(detector.getFocusY());
-            updateScale();
-            return true;
-        }
-    }*/
-
     //エリアボタンのリスナー設定をまとめるメソッド
+    //UFOアニメーション - 画像切り替え
+    private final Runnable ufoAnimationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // アニメーション対象のUFOがなければ何もしない
+            if (currentUfoView == null) return;
+
+            if (isUfoImage1) {
+                currentUfoView.setImageResource(R.drawable.ufo_image_2); // 2枚目の画像
+            } else {
+                currentUfoView.setImageResource(R.drawable.ufo_image_1); // 1枚目の画像
+            }
+            isUfoImage1 = !isUfoImage1;
+
+            // 200ミリ秒(0.2秒)ごとにこの処理を再度予約する
+            animationHandler.postDelayed(this, 200);
+        }
+    };
+
     private void setupAreaButtonClickListeners() {
         binding.maskMyosenji.setOnClickListener(v -> showAreaInfoDialog("Myosenji"));
         binding.maskGenkipark.setOnClickListener(v -> showAreaInfoDialog("GenkiPark"));
@@ -385,6 +332,12 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
             ufoAnimatorSet.cancel();
         }
 
+        // 実行中の画像切り替えアニメーションも止める
+        animationHandler.removeCallbacks(ufoAnimationRunnable);
+
+        // アニメーション対象のUFOを現在のものに設定
+        this.currentUfoView = (ImageView) ufoView;
+
         //上下（Y軸）の動き (1.5秒で10px下に)
         android.animation.ObjectAnimator floatY = android.animation.ObjectAnimator.ofFloat(ufoView, "translationY", 0f, 50f);
         floatY.setDuration(1500);
@@ -403,6 +356,9 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         ufoAnimatorSet = new android.animation.AnimatorSet();
         ufoAnimatorSet.playTogether(floatY, floatX);
         ufoAnimatorSet.start();
+
+        // 画像切り替えアニメーションを開始する
+        animationHandler.post(ufoAnimationRunnable);
     }
 
 
@@ -473,9 +429,9 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         PlayerData playerData = dataManager.loadPlayerData(getContext());
 
         //敵の出現チェックをダイアログからこちらに移動
-        EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
+        //EnemyManager.getInstance().checkAndProcessDailyUpdates(getContext(), playerData);
         //エリア没収が反映された可能性があるので、playerDataを再読み込み
-        playerData = dataManager.loadPlayerData(getContext());
+        //playerData = dataManager.loadPlayerData(getContext());
 
         List<String> unlockedIds = playerData.unlockedAreaIds;
         AreaManager areaManager = AreaManager.getInstance();
@@ -519,6 +475,10 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         boolean ufoLutherChurch = EnemyManager.getInstance().isEnemyChallengeable("LutherChurch");
         boolean ufoCountryPark = EnemyManager.getInstance().isEnemyChallengeable("CountryPark");
         boolean ufoBentenMountain = EnemyManager.getInstance().isEnemyChallengeable("BentenMountain");
+
+        // 画像切り替えアニメーションも止める
+        animationHandler.removeCallbacks(ufoAnimationRunnable);
+        currentUfoView = null; // 対象UFOをリセット
 
         //表示・非表示を切り替え
         binding.ufoMyosenji.setVisibility(ufoMyosenji ? View.VISIBLE : View.GONE);

@@ -306,7 +306,7 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageButton
-        android:id="@+id/info_button"
+        android:id="@+id/caption_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
 
@@ -314,7 +314,7 @@
 
         android:background="@drawable/rounded_text_bg"
 
-        android:contentDescription="インフォメーション"
+        android:contentDescription="キャプション"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/debug_button"

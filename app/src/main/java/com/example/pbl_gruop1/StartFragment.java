@@ -19,6 +19,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.fragment.NavHostFragment;
 import android.widget.ImageButton;
 
+import com.example.pbl_gruop1.databinding.FragmentStartBinding;
+
 public class StartFragment extends Fragment {
 
     //UI部品とReceiverを変数として持てるようにする
@@ -30,7 +32,8 @@ public class StartFragment extends Fragment {
     private ProgressBar kaihouritsuProgressBar;
     private TextView statusText;
     private static final String TAG = "StartFragment";
-
+    private FragmentStartBinding binding;
+    private PlayerData playerData;
 
     public StartFragment() {
     }
@@ -45,6 +48,16 @@ public class StartFragment extends Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_start, container, false);
     }
+
+    // ブロードキャストを受け取るためのReceiver
+    private BroadcastReceiver energyUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // エネルギー更新の通知を受け取ったら、画面表示を更新する
+            Log.d("StartFragment", "エネルギー更新の通知を受信しました。");
+            updateEnergyDisplay();
+        }
+    };
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -80,9 +93,9 @@ public class StartFragment extends Fragment {
                     .navigate(R.id.action_startFragment_to_debugFragment);
         });
 
-        view.findViewById(R.id.info_button).setOnClickListener(v -> {
+        view.findViewById(R.id.caption_button).setOnClickListener(v -> {
             NavHostFragment.findNavController(StartFragment.this)
-                    .navigate(R.id.action_startFragment_to_infomationFragment);
+                    .navigate(R.id.action_startFragment_to_captionFragment);
         });
 
         //Receiverを初期化
@@ -143,19 +156,53 @@ public class StartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //画面が表示されるときに受信機を登録
+        // 1. 日付更新チェックの前に、まず最新のプレイヤーデータを読み込む
+        PlayerData loadedPlayerData = GameDataManager.getInstance().loadPlayerData(requireContext());
+        // EnemyManagerに日付が変更されていないか確認させ、変更されていればエネルギーリセットなどを実行させる
+        EnemyManager.getInstance().checkAndProcessDailyUpdates(requireContext(), loadedPlayerData);
+        Log.d("StartFragment", "日付更新チェックを実行しました。");
+
+        // 2. 画面の表示を最新の状態に更新
+        updateEnergyDisplay();
+
+        // 3. ブロードキャストレシーバーを登録
+        IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.ENERGY_UPDATED");
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(energyUpdateReceiver, filter);
+        Log.d("StartFragment", "エネルギー更新用の受信機を登録しました。");
+        /*//画面が表示されるときに受信機を登録
         IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(updateReceiver, filter);
         Log.d(TAG, "データ更新受信機を登録");
         //画面に戻ってきたときも必ずUIを更新する
-        updateUI();
+        updateUI();*/
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //画面が見えなくなるときに受信機を解除
+        // アプリが非表示になる際にレシーバーの登録を解除
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(energyUpdateReceiver);
+        Log.d("StartFragment", "エネルギー更新用の受信機を解除しました。");
+        /*//画面が見えなくなるときに受信機を解除
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(updateReceiver);
-        Log.d(TAG, "データ更新受信機を解除しました。");
+        Log.d(TAG, "データ更新受信機を解除しました。");*/
+    }
+
+    private void updateEnergyDisplay() {
+        if (getContext() == null) {
+            return;
+        }
+        PlayerData playerData = GameDataManager.getInstance().loadPlayerData(getContext());
+        if (playerData == null) {
+            return;
+        }
+        if (energyText != null) {
+            energyText.setText(playerData.energy + " / " + playerData.maxEnergy);
+        }
+        if (energyProgressBar != null) {
+            energyProgressBar.setMax(playerData.maxEnergy);
+            energyProgressBar.setProgress(playerData.energy);
+        }
+        Log.d(TAG, "エネルギー表示を更新しました: " + playerData.energy);
     }
 }
