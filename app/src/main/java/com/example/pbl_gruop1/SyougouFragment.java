@@ -44,7 +44,7 @@ public class SyougouFragment extends Fragment {
         //RecyclerViewの初期設定
         this.recyclerView = view.findViewById(R.id.syougou_recycler_view);
         //LinearLayoutManagerの設定を忘れないように追加
-        //this.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        this.recyclerView.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(getContext(), 2));
 
         //最初にアダプターを初期化
         Context context = getContext();

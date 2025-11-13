@@ -224,10 +224,9 @@
 
     <com.example.pbl_gruop1.AlphaThresholdImageButton
         android:id="@+id/to_map_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="88dp"
+        android:layout_width="250dp"
+        android:layout_height="187dp"
+        android:layout_marginBottom="100dp"
         android:background="@android:color/transparent"
         android:clickable="true"
         android:contentDescription="マップへ移動"
@@ -258,10 +257,10 @@
 
     <com.example.pbl_gruop1.AlphaThresholdImageButton
         android:id="@+id/to_syougou_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="280dp"
+        android:layout_height="212dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="88dp"
+        android:layout_marginBottom="276dp"
         android:background="@android:color/transparent"
         android:clickable="true"
         android:contentDescription="称号リストへ移動"

@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="・歩くとエネルギーがたまります。\n・UFOとのバトルにはエネルギーが80必要です。\n・UFOは30タップで撃退できます。" />
+            android:text="・歩くとエネルギーがたまります。\n・UFOとのバトルにはエネルギーが80必要です。\n・UFOは60タップで撃退できます。" />
 
         <TextView
             android:layout_width="wrap_content"

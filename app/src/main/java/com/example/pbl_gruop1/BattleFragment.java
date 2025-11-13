@@ -32,7 +32,8 @@ public class BattleFragment extends Fragment {
 
     private static final String TAG = "BattleFragment";
     private static final long GAME_TIME_MS = 10000; // 制限時間 (10秒)
-    private static final int REQUIRED_TAPS = 30; // 勝利に必要なタップ数
+    private static final int REQUIRED_TAPS = 60; // 勝利に必要なタップ数
+    //勝利に必要なタップ数を30から60に変えました(検証計画書及び仕様書提出後)
 
     //UI部品
     private TextView timerText;
