@@ -157,11 +157,11 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         //エリアボタンを最初から「クリック不可」に設定しておく
         setMaskButtonClickable(false);
         binding.zoomInButton.setOnClickListener(v -> {
-            zoomMap(1.25f); // 1.25倍
+            zoomMap(2.0f); // 1.60倍
         });
 
         binding.zoomOutButton.setOnClickListener(v -> {
-            zoomMap(0.8f); // 0.8倍 (1 / 1.25)
+            zoomMap(0.5f); // 0.625倍 (1 / 1.60)
         });
     }
 
@@ -171,6 +171,15 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
         IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(updateReceiver, filter);
         Log.d(TAG, "データ更新受信機を登録");
+        //StartFragmentと同様に、日付更新チェックをここでも行う必要あり
+        if (getContext() != null) {
+            Log.d(TAG, "onResume: 日付更新チェックを実行します。");
+            PlayerData loadedPlayerData = GameDataManager.getInstance().loadPlayerData(requireContext());
+
+            EnemyManager.getInstance().checkAndProcessDailyUpdates(requireContext(), loadedPlayerData);
+
+            Log.d(TAG, "onResume: 日付更新チェック完了。");
+        }
         updateUnlockedAreas();
     }
 
@@ -370,12 +379,14 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     }
 
     //マップの移動範囲を制限するメソッド
+    //マップの移動範囲を制限するメソッド
     private void clampTranslations() {
         if (binding == null) return;
 
         View parent = (View) binding.mapContainer.getParent();
         if (parent == null) return;
 
+        //mapContainer.getWidth() は parentWidth と同じ
         float viewWidth = binding.mapContainer.getWidth();
         float viewHeight = binding.mapContainer.getHeight();
 
@@ -389,24 +400,31 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
 
         //X軸の移動範囲を補正
         if (scaledWidth > parentWidth) {
-            //画像が画面より大きい場合、はみ出た分だけ移動可能
-            minX = parentWidth - scaledWidth;
-            maxX = parentWidth;
+            //画像が画面より大きい場合
+            //拡大によって「はみ出した」総量
+            float spillX = scaledWidth - parentWidth;
+
+            //左右に半分ずつはみ出しているので、その半分(540)だけ
+            //左右に (posX) 移動できるようにする
+            minX = -(spillX / 2);
+            maxX = (spillX / 2);
         } else {
-            //画像が画面より小さい場合、中央に配置
-            minX = (parentWidth - scaledWidth) / 2;
-            maxX = (parentWidth - scaledWidth) / 2;
+            //画像が画面より小さい場合
+            //PivotがCenterなので、(posX) での移動は許可しない
+            minX = 0;
+            maxX = 0;
         }
 
         //Y軸の移動範囲を補正
         if (scaledHeight > parentHeight) {
-            //画像が画面より大きい場合、はみ出た分だけ移動可能
-            minY = parentHeight - scaledHeight;
-            maxY = parentHeight;
+            //画像が画面より大きい場合 (Pivot is Center)
+            float spillY = scaledHeight - parentHeight;
+            minY = -(spillY / 2); // (e.g., -960)
+            maxY = (spillY / 2);  // (e.g., +960)
         } else {
-            //画像が画面より小さい場合、中央に配置
-            minY = (parentHeight - scaledHeight) / 2;
-            maxY = (parentHeight - scaledHeight) / 2;
+            //画像が画面より小さい場合
+            minY = 0;
+            maxY = 0;
         }
 
         //計算した範囲内に posX と posY を収める

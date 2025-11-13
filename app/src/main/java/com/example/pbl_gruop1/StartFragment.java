@@ -49,13 +49,13 @@ public class StartFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_start, container, false);
     }
 
-    // ブロードキャストを受け取るためのReceiver
+    //ブロードキャストを受け取るためのReceiver
     private BroadcastReceiver energyUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // エネルギー更新の通知を受け取ったら、画面表示を更新する
             Log.d("StartFragment", "エネルギー更新の通知を受信しました。");
-            updateEnergyDisplay();
+            updateUI();
         }
     };
 
@@ -156,25 +156,20 @@ public class StartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // 1. 日付更新チェックの前に、まず最新のプレイヤーデータを読み込む
+        // 日付更新チェックの前に、まず最新のプレイヤーデータを読み込む
         PlayerData loadedPlayerData = GameDataManager.getInstance().loadPlayerData(requireContext());
-        // EnemyManagerに日付が変更されていないか確認させ、変更されていればエネルギーリセットなどを実行させる
+        //EnemyManagerに日付が変更されていないか確認させ、変更されていればエネルギーリセットなどを実行させる
         EnemyManager.getInstance().checkAndProcessDailyUpdates(requireContext(), loadedPlayerData);
         Log.d("StartFragment", "日付更新チェックを実行しました。");
 
-        // 2. 画面の表示を最新の状態に更新
-        updateEnergyDisplay();
+        //画面の表示を最新の状態に更新
+        updateUI();
 
-        // 3. ブロードキャストレシーバーを登録
+        //ブロードキャストレシーバーを登録
         IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.ENERGY_UPDATED");
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(energyUpdateReceiver, filter);
         Log.d("StartFragment", "エネルギー更新用の受信機を登録しました。");
-        /*//画面が表示されるときに受信機を登録
-        IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(updateReceiver, filter);
-        Log.d(TAG, "データ更新受信機を登録");
-        //画面に戻ってきたときも必ずUIを更新する
-        updateUI();*/
+
     }
 
     @Override
@@ -183,9 +178,6 @@ public class StartFragment extends Fragment {
         // アプリが非表示になる際にレシーバーの登録を解除
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(energyUpdateReceiver);
         Log.d("StartFragment", "エネルギー更新用の受信機を解除しました。");
-        /*//画面が見えなくなるときに受信機を解除
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(updateReceiver);
-        Log.d(TAG, "データ更新受信機を解除しました。");*/
     }
 
     private void updateEnergyDisplay() {
