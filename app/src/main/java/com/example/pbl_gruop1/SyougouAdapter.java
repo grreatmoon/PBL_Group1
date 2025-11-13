@@ -20,6 +20,10 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
     private final PlayerData playerData;
     private final Context context; //ダイアログ表示のためにContextを受け取る
 
+    //ダイアログの複数表示防ぐため
+    private static long lastClickTime = 0;
+    private static final long CLICK_DEBOUNCE_INTERVAL = 1000;//(1s)
+
     public SyougouAdapter(Context context, List<Title> titleList, PlayerData playerData) {
         this.context = context;
         this.titleList = titleList;
@@ -69,12 +73,22 @@ public class SyougouAdapter extends RecyclerView.Adapter<SyougouAdapter.SyougouV
             //取得済みなら...
             holder.syougouButton.setText(currentTitle.getName()); //称号名をそれぞれ設定
             holder.syougouButton.setOnClickListener(v -> {
+                if (System.currentTimeMillis() - lastClickTime <CLICK_DEBOUNCE_INTERVAL) {
+                    return;
+                    //1s以内の連続タップを無視
+                }
+                lastClickTime = System.currentTimeMillis(); //タップ時刻を更新
                 showDetailDialog(currentTitleName, dialogMessage, imageResId);
             });
         } else {
             //未取得なら...
             holder.syougouButton.setText("???"); //称号名を？？？に設定
             holder.syougouButton.setOnClickListener(v -> {
+                if (System.currentTimeMillis() - lastClickTime <CLICK_DEBOUNCE_INTERVAL) {
+                    return;
+                    //1s以内の連続タップを無視
+                }
+                lastClickTime = System.currentTimeMillis(); //タップ時刻を更新
                 showDetailDialog("？？？", dialogMessage, lockedImageResId);
             });
         }
