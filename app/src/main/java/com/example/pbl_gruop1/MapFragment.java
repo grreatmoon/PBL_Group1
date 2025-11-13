@@ -38,6 +38,10 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
     private View.OnTouchListener mapTouchListener;
     private android.animation.AnimatorSet ufoAnimatorSet;
 
+    //ダイアログ複数同時表示を防ぐやつ
+    private static long lastAreaClickTime = 0; //エリアタップの時刻を記録
+    private static final long CLICK_DEBOUNCE_INTERVAL = 1000; //1s
+
     //タッチ操作関連の変数
     private GestureDetector gestureDetector; //ダブルタップ検出用
     private boolean isZooming = false; //ダブルタップ後のズーム操作中かどうかのフラグ
@@ -278,6 +282,11 @@ public class MapFragment extends Fragment implements View.OnTouchListener {
             android.widget.Toast.makeText(getContext(), "エリア選択モードに切り替えてください", android.widget.Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if (System.currentTimeMillis() - lastAreaClickTime < CLICK_DEBOUNCE_INTERVAL) {
+            return; //1秒以内の連続タップは無視
+        }
+        lastAreaClickTime = System.currentTimeMillis(); //タップ時刻を更新
 
         Area targetArea = AreaManager.getInstance().getAreaById(areaId);
         if (targetArea == null) {

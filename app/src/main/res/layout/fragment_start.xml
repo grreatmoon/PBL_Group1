@@ -224,8 +224,10 @@
 
     <com.example.pbl_gruop1.AlphaThresholdImageButton
         android:id="@+id/to_map_button"
-        android:layout_width="250dp"
-        android:layout_height="187dp"
+        android:layout_width="192dp"
+        android:layout_height="171dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="100dp"
         android:background="@android:color/transparent"
         android:clickable="true"
@@ -234,15 +236,16 @@
         android:scaleType="centerCrop"
         android:src="@drawable/map_button_image"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="W,1:1.5"
+        app:layout_constraintDimensionRatio="1:1.5"
         app:layout_constraintEnd_toStartOf="@+id/to_syougou_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.50" />
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="10dp"
+        android:fontFamily="@font/jf_dot_font"
         android:text="マップ"
         android:textColor="#000000"
         android:textSize="28sp"
@@ -252,15 +255,15 @@
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="@+id/to_map_button"
         app:layout_constraintTop_toTopOf="@+id/to_map_button"
-        app:layout_constraintVertical_bias="0.407"
-        android:fontFamily="@font/jf_dot_font"/>
+        app:layout_constraintVertical_bias="0.407" />
 
     <com.example.pbl_gruop1.AlphaThresholdImageButton
         android:id="@+id/to_syougou_button"
-        android:layout_width="280dp"
-        android:layout_height="212dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="276dp"
+        android:layout_width="184dp"
+        android:layout_height="178dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="100dp"
         android:background="@android:color/transparent"
         android:clickable="true"
         android:contentDescription="称号リストへ移動"
@@ -268,15 +271,16 @@
         android:scaleType="centerCrop"
         android:src="@drawable/title_list_button_image"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="W,1:1.5"
+        app:layout_constraintDimensionRatio="1:1.5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/to_map_button"
-        app:layout_constraintWidth_percent="0.60" />
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/to_map_button" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="10dp"
+        android:fontFamily="@font/jf_dot_font"
         android:text="バッヂ"
         android:textColor="#000000"
         android:textSize="28sp"
@@ -286,8 +290,7 @@
         app:layout_constraintHorizontal_bias="0.48"
         app:layout_constraintStart_toStartOf="@+id/to_syougou_button"
         app:layout_constraintTop_toTopOf="@+id/to_syougou_button"
-        app:layout_constraintVertical_bias="0.491"
-        android:fontFamily="@font/jf_dot_font"/>
+        app:layout_constraintVertical_bias="0.491" />
 
     <ImageButton
         android:id="@+id/debug_button"
