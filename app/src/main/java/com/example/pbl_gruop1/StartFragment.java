@@ -169,6 +169,8 @@ public class StartFragment extends Fragment {
         IntentFilter filter = new IntentFilter("com.example.pbl_gruop1.ENERGY_UPDATED");
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(energyUpdateReceiver, filter);
         Log.d("StartFragment", "エネルギー更新用の受信機を登録しました。");
+        IntentFilter titleFilter = new IntentFilter("com.example.pbl_gruop1.TITLE_DATA_UPDATED");
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(updateReceiver, titleFilter);
 
     }
 
@@ -178,6 +180,7 @@ public class StartFragment extends Fragment {
         // アプリが非表示になる際にレシーバーの登録を解除
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(energyUpdateReceiver);
         Log.d("StartFragment", "エネルギー更新用の受信機を解除しました。");
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(updateReceiver);
     }
 
     private void updateEnergyDisplay() {
